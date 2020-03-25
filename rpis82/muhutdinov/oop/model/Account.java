@@ -2,7 +2,7 @@ package rpis82.muhutdinov.oop.model;
 
 public class Account {
     public String number;
-    private double balance;
+    public double balance;
 
     public Account(){
         number = "";
