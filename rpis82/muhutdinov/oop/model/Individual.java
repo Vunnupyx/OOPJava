@@ -1,23 +1,37 @@
 package rpis82.muhutdinov.oop.model;
 
-public class Individual {
+public class Individual implements Client{
     public Account[] accounts;
     public int size;
+    public String name;
 
     //Конструкторы
-    public Individual() {
+    public Individual(String name) {
         accounts = new Account[16];
         size = 16;
+        this.name = name;
     }
 
-    public Individual(int size) {
+    public Individual(String name, int size) {
         accounts = new Account[size];
         this.size = size;
+        this.name = name;
     }
 
-    public Individual(Account[] accounts) {
+    public Individual(String name, Account[] accounts) {
         this.accounts = accounts;
         size = accounts.length;
+        this.name = name;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     // Доп. метод Расширить
