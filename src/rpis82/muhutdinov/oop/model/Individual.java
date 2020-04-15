@@ -3,11 +3,13 @@ package rpis82.muhutdinov.oop.model;
 public class Individual {
     public Account[] accounts;
     public int size;
+    private final int DEFAULT_ELEMENTS = 16;
 
     //Конструкторы
     public Individual() {
-        accounts = new Account[16];
-        size = 16;
+        //todo снова константа  // исправил
+        accounts = new Account[DEFAULT_ELEMENTS];
+        size = DEFAULT_ELEMENTS;
     }
 
     public Individual(int size) {
@@ -21,7 +23,8 @@ public class Individual {
     }
 
     // Доп. метод Расширить
-    public void extendAccounts() {
+    //todo почему public? такого метода нет в контракте класса // исправил
+    private void extendAccounts() {
         Account[] newAccount = new Account[accounts.length * 2];
         System.arraycopy(accounts, 0, newAccount, 0, accounts.length);
         accounts = newAccount;
@@ -29,6 +32,7 @@ public class Individual {
 
     //Добавить ссылку
     public boolean add(Account account) {
+        //todo среда сама намекает) // я не смог понять, что должен исправить(
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i] == null) {
                 accounts[i] = account;
@@ -36,6 +40,7 @@ public class Individual {
                 return true;
             }
         }
+        //todo каждый раз при добавлении объекта увеличиваем массив? // если цикл не сработал, то значит свободных мест нету и нам остается лишь расширить и доб. в своб. место
         extendAccounts();
         accounts[accounts.length / 2] = account;
         size++;
@@ -43,12 +48,15 @@ public class Individual {
     }
 
     public boolean add(int index, Account account) {
-        while (accounts.length - 1 < index) {
-            extendAccounts();
-        }
-        if (accounts[index] == null) {
-            size++;
-        }
+        //todo почему while, а не if? // исправил // -я думал этот метод должен работать при любых обстоятельствах
+        //while расширяет массив до тех пор пока индекс не входит в массив
+
+//        while (accounts.length - 1 < index) {
+//            extendAccounts();
+//        }
+//        if (accounts[index] == null) {
+//            size++;
+//        }
         accounts[index] = account;
         return true;
     }
@@ -59,17 +67,24 @@ public class Individual {
     }
 
     public Account get(String accountNumber) {
+        //todo почему не обычный for? // Ну он же проще выглядит, можно оставить?
         for (Account account : accounts) {
-            if (account != null && account.number.equals(accountNumber))
+            //todo логику сравнения вынести в отдельный приватный метод // исправил
+            if (compareAccountNumber(account, accountNumber))
                 return account;
         }
         return null;
     }
 
+    private boolean compareAccountNumber(Account account, String accountNumber) {
+        return account != null && account.number.equals(accountNumber);
+    }
+
     //Проверить есть ли ссылка с заданным номером
     public boolean hasAccount(String accountNumber) {
+        //todo аналогично // исправил
         for (Account account : accounts) {
-            if (account != null && account.number.equals(accountNumber))
+            if (compareAccountNumber(account, accountNumber))
                 return true;
         }
         return false;
@@ -77,32 +92,30 @@ public class Individual {
 
     //Изменить ссылку по номеру массива
     public Account set(int index, Account account) {
-        Account lastAccount = accounts[index];
+        Account lostAccount = accounts[index];
         accounts[index] = account;
-        return lastAccount;
+        return lostAccount;
+        //todo lost больше подойдет, чем last // исправил
     }
 
     //Удалить ссылку
     public Account remove(int index) {
-
         if (accounts.length - 1 >= index) {
-            Account lastAccount = accounts[index];
+            Account lostAccount = accounts[index];
             System.arraycopy(accounts, index + 1, accounts, index, accounts.length - 1 - index);
             accounts[accounts.length - 1] = null;
             size--;
-            return lastAccount;
+            return lostAccount;
         }
         return null;
     }
 
+    //todo здесь можно было найти индекс удаляемого аккаунта и вызвать предыдущий метод // исправил
     public Account remove(String accountNumber) {
         for (int i = 0; i < accounts.length; i++) {
-            if (accounts[i] != null && accounts[i].number.equals(accountNumber)) {
-                Account lastAccount = accounts[i];
-                System.arraycopy(accounts, i + 1, accounts, i, accounts.length - 1 - i);
-                accounts[accounts.length - 1] = null;
-                size--;
-                return lastAccount;
+            if (compareAccountNumber(accounts[i], accountNumber)) {
+                Account lostAccount = remove(i);
+                return lostAccount;
             }
         }
         return null;
@@ -117,13 +130,15 @@ public class Individual {
     //быть равен числу элементов в исходном массиве)
     public Account[] getAccounts() {
         Account[] returnAccount = new Account[size];
-        int count = 0;
-        for (Account account : accounts) {
-            if (account != null) {
-                returnAccount[count] = account;
-                count++;
-            }
-        }
+        System.arraycopy(accounts, 0, returnAccount, 0, size);
+        //int count = 0;
+        //todo почему foreach? почему копирование не через System.arraycopy? // исправил
+//        for (Account account : accounts) {
+//            if (account != null) {
+//                returnAccount[count] = account;
+//                count++;
+//            }
+//        }
         return returnAccount;
     }
 
@@ -144,8 +159,9 @@ public class Individual {
 
     public double totalBalance() {
         double sumBalance = 0;
+        //todo лучше for // можно оставить?
         for (Account account : accounts) {
-            if(account != null) {
+            if (account != null) {
                 sumBalance += account.balance;
             }
         }

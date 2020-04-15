@@ -1,5 +1,6 @@
 package rpis82.muhutdinov.oop.model;
 
+//todo комментарии из Individual применимы сюда
 public class AccountManager {
     public Individual[] individuals;
     private int size;
@@ -83,7 +84,7 @@ public class AccountManager {
         Individual[] returnAccounts = new Individual[size];
         int count = 0;
         for (Individual individual : individuals) {
-            if(individual != null) {
+            if (individual != null) {
                 returnAccounts[count] = new Individual(individual.getAccounts());
                 count++;
             }
@@ -114,6 +115,7 @@ public class AccountManager {
         }
         return null;
     }
+
     public Account removeAccount(String accountNumber) {
 
         for (Individual individual : individuals) {

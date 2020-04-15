@@ -3,12 +3,16 @@ package rpis82.muhutdinov.oop.model;
 public class Account {
     public String number;
     public double balance;
+    private final String EMPTY_NUMBER = "";
+    private final int EMPTY_BALANCE = 0;
 
-    public Account(){
-        number = "";
-        balance = 0;
+    //todo выносим магические константы в private final // исправил
+    public Account() {
+        number = EMPTY_NUMBER;
+        balance = EMPTY_BALANCE;
     }
-    public Account(String number, double balance){
+
+    public Account(String number, double balance) {
         this.number = number;
         this.balance = balance;
     }
