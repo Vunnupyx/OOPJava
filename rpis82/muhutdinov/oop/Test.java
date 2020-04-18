@@ -1,12 +1,8 @@
 package rpis82.muhutdinov.oop;
 
 import rpis82.muhutdinov.oop.model.Account;
-import rpis82.muhutdinov.oop.model.AccountManager;
 import rpis82.muhutdinov.oop.model.DebitAccount;
-import rpis82.muhutdinov.oop.model.Individual;
-
-import java.sql.SQLOutput;
-import java.util.Arrays;
+import rpis82.muhutdinov.oop.model.Entity;
 
 class Test {
 
@@ -142,13 +138,23 @@ class Test {
 //
 //    }
     static void lab2tests(){
-        DebitAccount first = new DebitAccount("12345",2000);
-        DebitAccount second = new DebitAccount();
+        Account first = new DebitAccount("12345",2000);
+        Account second = new DebitAccount();
         System.out.println("Номер: " + first.getNumber() + " Баланс: " + first.getBalance());
         System.out.println("Номер: " + second.getNumber() + " Фамилия: " + second.getBalance());
         second.setNumber("4321");
         second.setBalance(1200);
         System.out.println("Номер: " + second.getNumber() + " Фамилия: " + second.getBalance());
-        System.out.println(first.number);
+
+        Account[] arrayAccounts = {first, second};
+        Entity entity = new Entity("group", arrayAccounts);
+        entity.addByIndex(0, first);
+        entity.printList();
+
+        Entity entity1 = new Entity("group1");
+        entity1.addBack(second);
+        entity1.addBack(first);
+        entity1.printList();
+        System.out.println( entity1.size());
     }
 }

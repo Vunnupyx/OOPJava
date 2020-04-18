@@ -7,13 +7,13 @@ public class Individual implements Client{
 
     //Конструкторы
     public Individual(String name) {
-        accounts = new Account[16];
+        accounts = new DebitAccount[16];
         size = 16;
         this.name = name;
     }
 
     public Individual(String name, int size) {
-        accounts = new Account[size];
+        accounts = new DebitAccount[size];
         this.size = size;
         this.name = name;
     }
@@ -36,7 +36,7 @@ public class Individual implements Client{
 
     // Доп. метод Расширить
     public void extendAccounts() {
-        Account[] newAccount = new Account[accounts.length * 2];
+        Account[] newAccount = new DebitAccount[accounts.length * 2];
         System.arraycopy(accounts, 0, newAccount, 0, accounts.length);
         accounts = newAccount;
     }
@@ -74,7 +74,7 @@ public class Individual implements Client{
 
     public Account get(String accountNumber) {
         for (Account account : accounts) {
-            if (account != null && account.number.equals(accountNumber))
+            if (account != null && account.getNumber().equals(accountNumber))
                 return account;
         }
         return null;
@@ -83,7 +83,7 @@ public class Individual implements Client{
     //Проверить есть ли ссылка с заданным номером
     public boolean hasAccount(String accountNumber) {
         for (Account account : accounts) {
-            if (account != null && account.number.equals(accountNumber))
+            if (account != null && account.getNumber().equals(accountNumber))
                 return true;
         }
         return false;
@@ -111,7 +111,7 @@ public class Individual implements Client{
 
     public Account remove(String accountNumber) {
         for (int i = 0; i < accounts.length; i++) {
-            if (accounts[i] != null && accounts[i].number.equals(accountNumber)) {
+            if (accounts[i] != null && accounts[i].getNumber().equals(accountNumber)) {
                 Account lastAccount = accounts[i];
                 System.arraycopy(accounts, i + 1, accounts, i, accounts.length - 1 - i);
                 accounts[accounts.length - 1] = null;
@@ -130,7 +130,7 @@ public class Individual implements Client{
     //возвращающий массив счетов (значений null в массиве быть не должно, его размер должен
     //быть равен числу элементов в исходном массиве)
     public Account[] getAccounts() {
-        Account[] returnAccount = new Account[size];
+        Account[] returnAccount = new DebitAccount[size];
         int count = 0;
         for (Account account : accounts) {
             if (account != null) {
@@ -146,7 +146,7 @@ public class Individual implements Client{
         Account copy;
         for (int i = 0; i < returnAccount.length; i++) {
             for (int j = 0; j < returnAccount.length - 1; j++) {
-                if (returnAccount[j].balance > returnAccount[j + 1].balance) {
+                if (returnAccount[j].getBalance() > returnAccount[j + 1].getBalance()) {
                     copy = returnAccount[j + 1];
                     returnAccount[j + 1] = returnAccount[j];
                     returnAccount[j] = copy;
@@ -160,7 +160,7 @@ public class Individual implements Client{
         double sumBalance = 0;
         for (Account account : accounts) {
             if(account != null) {
-                sumBalance += account.balance;
+                sumBalance += account.getBalance();
             }
         }
         return sumBalance;

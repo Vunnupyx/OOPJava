@@ -1,15 +1,70 @@
 package rpis82.muhutdinov.oop.model;
 
-public class Entity implements Client{
+
+public class Entity implements Client {
     private String name;
     private Node head;
-    private Node taile;
+    private Node tail;
     private int size;
 
-    Entity(String name){
+    public Entity(String name) {
         this.name = name;
-        head = null;
-        taile = null;
+        this.head = null;
+        this.tail = null;
+    }
+
+    public Entity(String name, Account[] accounts) {
+        this.name = name;
+        for (Account account : accounts) {
+            addBack(account);
+        }
+    }
+
+    //Добавляющий узел в конец списка
+    public void addBack(Account account) {
+        Node node = new Node(null, account);
+
+        if (head == null) {
+            head = new Node(node, null);
+            tail = node;
+        } else {
+            tail.next = node;
+        }
+        size++;
+    }
+
+    //Добавляющий узел в заданную позицию в списке
+    public void addByIndex(int index, Account account) {
+        Node node = new Node(null, account);
+        Node arrayNode = head.next;
+
+        for (int i = 0; i <= size - 1; i++) {
+
+            if (i == index) {
+                arrayNode = new Node(arrayNode.next, account);
+            } else
+                arrayNode = arrayNode.next;
+        }
+
+    }
+
+    public void printList() {
+        Node t = head.next;
+        //System.out.println(t.next.value.getNumber());
+        while (t != null) {
+            System.out.println(t.value.getNumber());
+            t = t.next;
+        }
+    }
+
+    private class Node {
+        Node next;
+        Account value;
+
+        Node(Node next, Account value) {
+            this.next = next;
+            this.value = value;
+        }
     }
 
     @Override
@@ -54,7 +109,7 @@ public class Entity implements Client{
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
@@ -82,13 +137,6 @@ public class Entity implements Client{
         this.name = name;
     }
 
-    private class Node {
-        private Node next;
-        private Account value;
-        Node(Account value, Node next){
-            this.value = value;
-            this.next = next;
-        }
-    }
+
 }
 

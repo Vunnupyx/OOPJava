@@ -1,7 +1,7 @@
 package rpis82.muhutdinov.oop.model;
 
 public class AccountManager {
-    public Individual[] individuals;
+    public Client[] individuals;
     private int size;
 
     //Конструкторы
@@ -10,20 +10,20 @@ public class AccountManager {
         this.size = size;
     }
 
-    public AccountManager(Individual[] individuals) {
+    public AccountManager(Client[] individuals) {
         this.individuals = individuals;
         size = individuals.length;
     }
 
     // Доп. метод Расширить
     public void extendAccounts() {
-        Individual[] newAccount = new Individual[individuals.length * 2];
+        Client[] newAccount = new Individual[individuals.length * 2];
         System.arraycopy(individuals, 0, newAccount, 0, individuals.length);
         individuals = newAccount;
     }
 
     //Добавить ссылку
-    public boolean add(Individual individual) {
+    public boolean add(Client individual) {
         for (int i = 0; i < individuals.length; i++) {
             if (individuals[i] == null) {
                 individuals[i] = individual;
@@ -37,7 +37,7 @@ public class AccountManager {
         return true;
     }
 
-    public boolean add(int index, Individual individual) {
+    public boolean add(int index, Client individual) {
         while (individuals.length - 1 < index) {
             extendAccounts();
         }
@@ -50,21 +50,21 @@ public class AccountManager {
     }
 
     //Получить ссылку
-    public Individual get(int index) {
+    public Client get(int index) {
         return individuals[index];
     }
 
     //Изменить ссылку по номеру массива
-    public Individual set(int index, Individual individual) {
-        Individual lastAccount = individuals[index];
+    public Client set(int index, Client individual) {
+        Client lastAccount = individuals[index];
         individuals[index] = individual;
         return lastAccount;
     }
 
     //Удалить ссылку
-    public Individual remove(int index) {
+    public Client remove(int index) {
         if (individuals.length - 1 >= index) {
-            Individual lastAccount = individuals[index];
+            Client lastAccount = individuals[index];
             System.arraycopy(individuals, index + 1, individuals, index, individuals.length - 1 - index);
             individuals[individuals.length - 1] = null;
             size--;
@@ -79,21 +79,21 @@ public class AccountManager {
     }
 
     //Возвращает массив физ. лиц
-    public Individual[] getIndividuals() {
-        Individual[] returnAccounts = new Individual[size];
+    public Client[] getClients() {
+        Client[] returnAccounts = new Individual[size];
         int count = 0;
-        for (Individual individual : individuals) {
+        for (Client individual : individuals) {
             if(individual != null) {
-                returnAccounts[count] = new Individual(individual.getAccounts());
+                returnAccounts[count] = new Individual(individual.getName(), individual.getAccounts());
                 count++;
             }
         }
         return returnAccounts;
     }
 
-    public Individual[] sortedByBalanceIndividuals() {
-        Individual[] returnAccount = getIndividuals();
-        Individual copy;
+    public Client[] sortedByBalanceIndividuals() {
+        Client[] returnAccount = getClients();
+        Client copy;
         for (int i = 0; i < returnAccount.length; i++) {
             for (int j = 0; j < returnAccount.length - 1; j++) {
                 if (returnAccount[j].totalBalance() > returnAccount[j + 1].totalBalance()) {
@@ -107,7 +107,7 @@ public class AccountManager {
     }
 
     public Account getAccount(String accountNumber) {
-        for (Individual individual : individuals) {
+        for (Client individual : individuals) {
             Account account = individual.get(accountNumber);
             if (account != null)
                 return account;
@@ -116,7 +116,7 @@ public class AccountManager {
     }
     public Account removeAccount(String accountNumber) {
 
-        for (Individual individual : individuals) {
+        for (Client individual : individuals) {
             Account account = individual.remove(accountNumber);
             if (account != null)
                 return account;
@@ -126,11 +126,11 @@ public class AccountManager {
 
     public Account setAccount(String accountNumber, Account account) {
         for (int i = 0; i < individuals.length; i++) {
-            for (int j = 0; j < individuals[i].accounts.length; j++) {
+            for (int j = 0; j < individuals[i].getAccounts().length; j++) {
 
-                if (individuals[i].accounts[j].number.equals(accountNumber)) {
-                    Account lastAccount = individuals[i].accounts[j];
-                    individuals[i].accounts[j] = account;
+                if (individuals[i].getAccounts()[j].getNumber().equals(accountNumber)) {
+                    Account lastAccount = individuals[i].getAccounts()[j];
+                    individuals[i].getAccounts()[j] = account;
                     return lastAccount;
                 }
             }
