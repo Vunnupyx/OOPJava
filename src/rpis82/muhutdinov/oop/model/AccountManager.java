@@ -1,6 +1,5 @@
 package rpis82.muhutdinov.oop.model;
 
-//todo комментарии из Individual применимы сюда
 public class AccountManager {
     public Individual[] individuals;
     private int size;

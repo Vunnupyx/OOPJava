@@ -6,7 +6,6 @@ public class Account {
     private final String EMPTY_NUMBER = "";
     private final int EMPTY_BALANCE = 0;
 
-    //todo выносим магические константы в private final // исправил
     public Account() {
         number = EMPTY_NUMBER;
         balance = EMPTY_BALANCE;

@@ -7,7 +7,6 @@ public class Individual {
 
     //Конструкторы
     public Individual() {
-        //todo снова константа  // исправил
         accounts = new Account[DEFAULT_ELEMENTS];
         size = DEFAULT_ELEMENTS;
     }
@@ -23,7 +22,6 @@ public class Individual {
     }
 
     // Доп. метод Расширить
-    //todo почему public? такого метода нет в контракте класса // исправил
     private void extendAccounts() {
         Account[] newAccount = new Account[accounts.length * 2];
         System.arraycopy(accounts, 0, newAccount, 0, accounts.length);
@@ -32,7 +30,6 @@ public class Individual {
 
     //Добавить ссылку
     public boolean add(Account account) {
-        //todo среда сама намекает) // я не смог понять, что должен исправить(
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i] == null) {
                 accounts[i] = account;
@@ -40,7 +37,6 @@ public class Individual {
                 return true;
             }
         }
-        //todo каждый раз при добавлении объекта увеличиваем массив? // если цикл не сработал, то значит свободных мест нету и нам остается лишь расширить и доб. в своб. место
         extendAccounts();
         accounts[accounts.length / 2] = account;
         size++;
@@ -48,7 +44,6 @@ public class Individual {
     }
 
     public boolean add(int index, Account account) {
-        //todo почему while, а не if? // исправил // -я думал этот метод должен работать при любых обстоятельствах
         //while расширяет массив до тех пор пока индекс не входит в массив
 
 //        while (accounts.length - 1 < index) {
@@ -67,9 +62,7 @@ public class Individual {
     }
 
     public Account get(String accountNumber) {
-        //todo почему не обычный for? // Ну он же проще выглядит, можно оставить?
         for (Account account : accounts) {
-            //todo логику сравнения вынести в отдельный приватный метод // исправил
             if (compareAccountNumber(account, accountNumber))
                 return account;
         }
@@ -82,7 +75,6 @@ public class Individual {
 
     //Проверить есть ли ссылка с заданным номером
     public boolean hasAccount(String accountNumber) {
-        //todo аналогично // исправил
         for (Account account : accounts) {
             if (compareAccountNumber(account, accountNumber))
                 return true;
@@ -95,7 +87,6 @@ public class Individual {
         Account lostAccount = accounts[index];
         accounts[index] = account;
         return lostAccount;
-        //todo lost больше подойдет, чем last // исправил
     }
 
     //Удалить ссылку
@@ -110,7 +101,6 @@ public class Individual {
         return null;
     }
 
-    //todo здесь можно было найти индекс удаляемого аккаунта и вызвать предыдущий метод // исправил
     public Account remove(String accountNumber) {
         for (int i = 0; i < accounts.length; i++) {
             if (compareAccountNumber(accounts[i], accountNumber)) {
@@ -132,7 +122,6 @@ public class Individual {
         Account[] returnAccount = new Account[size];
         System.arraycopy(accounts, 0, returnAccount, 0, size);
         //int count = 0;
-        //todo почему foreach? почему копирование не через System.arraycopy? // исправил
 //        for (Account account : accounts) {
 //            if (account != null) {
 //                returnAccount[count] = account;
@@ -159,10 +148,9 @@ public class Individual {
 
     public double totalBalance() {
         double sumBalance = 0;
-        //todo лучше for // можно оставить?
-        for (Account account : accounts) {
-            if (account != null) {
-                sumBalance += account.balance;
+        for (int i = 0; i < accounts.length; i++) {
+            if (accounts[i] != null) {
+                sumBalance += accounts[i].balance;
             }
         }
         return sumBalance;
