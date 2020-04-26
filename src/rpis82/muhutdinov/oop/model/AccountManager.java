@@ -1,5 +1,7 @@
 package rpis82.muhutdinov.oop.model;
 
+import java.time.chrono.MinguoDate;
+
 public class AccountManager {
     public Client[] individuals;
     private int size;
@@ -38,14 +40,7 @@ public class AccountManager {
     }
 
     public boolean add(int index, Client individual) {
-        while (individuals.length - 1 < index) {
-            extendAccounts();
-        }
-        if (individuals[index] == null) {
-            size++;
-        }
         individuals[index] = individual;
-
         return true;
     }
 
@@ -56,21 +51,18 @@ public class AccountManager {
 
     //Изменить ссылку по номеру массива
     public Client set(int index, Client individual) {
-        Client lastAccount = individuals[index];
+        Client lostAccount = individuals[index];
         individuals[index] = individual;
-        return lastAccount;
+        return lostAccount;
     }
 
     //Удалить ссылку
     public Client remove(int index) {
-        if (individuals.length - 1 >= index) {
-            Client lastAccount = individuals[index];
-            System.arraycopy(individuals, index + 1, individuals, index, individuals.length - 1 - index);
-            individuals[individuals.length - 1] = null;
-            size--;
-            return lastAccount;
-        }
-        return null;
+        Client lostAccount = individuals[index];
+        System.arraycopy(individuals, index + 1, individuals, index, individuals.length - 1 - index);
+        individuals[individuals.length - 1] = null;
+        size--;
+        return lostAccount;
     }
 
     // возвращающий число физ. лиц
@@ -80,62 +72,55 @@ public class AccountManager {
 
     //Возвращает массив физ. лиц
     public Client[] getClients() {
-        Client[] returnAccounts = new Individual[size];
-        int count = 0;
-        for (Client individual : individuals) {
-            if(individual != null) {
-                returnAccounts[count] = new Individual(individual.getName(), individual.getAccounts());
-                count++;
-            }
-        }
-        return returnAccounts;
+        Client[] returnClients = new Individual[size];
+        System.arraycopy(individuals, 0, returnClients, 0, size);
+        return returnClients;
     }
 
-    public Client[] sortedByBalanceIndividuals() {
-        Client[] returnAccount = getClients();
+    public Client[] sortedByBalanceClients() {
+        Client[] returnClients = getClients();
         Client copy;
-        for (int i = 0; i < returnAccount.length; i++) {
-            for (int j = 0; j < returnAccount.length - 1; j++) {
-                if (returnAccount[j].totalBalance() > returnAccount[j + 1].totalBalance()) {
-                    copy = returnAccount[j + 1];
-                    returnAccount[j + 1] = returnAccount[j];
-                    returnAccount[j] = copy;
+        for (int i = 0; i < returnClients.length; i++) {
+            for (int j = 0; j < returnClients.length - 1; j++) {
+                if (returnClients[j].totalBalance() > returnClients[j + 1].totalBalance()) {
+                    copy = returnClients[j + 1];
+                    returnClients[j + 1] = returnClients[j];
+                    returnClients[j] = copy;
                 }
             }
         }
-        return returnAccount;
+        return returnClients;
     }
 
     public Account getAccount(String accountNumber) {
         for (Client individual : individuals) {
-            Account account = individual.get(accountNumber);
-            if (account != null)
-                return account;
+            return individual.get(accountNumber);
         }
         return null;
     }
+
     public Account removeAccount(String accountNumber) {
 
         for (Client individual : individuals) {
-            Account account = individual.remove(accountNumber);
-            if (account != null)
-                return account;
+            return individual.remove(accountNumber);
         }
         return null;
     }
 
     public Account setAccount(String accountNumber, Account account) {
         for (int i = 0; i < individuals.length; i++) {
-            for (int j = 0; j < individuals[i].getAccounts().length; j++) {
-
-                if (individuals[i].getAccounts()[j].getNumber().equals(accountNumber)) {
-                    Account lastAccount = individuals[i].getAccounts()[j];
-                    individuals[i].getAccounts()[j] = account;
-                    return lastAccount;
+            Account[] arrayAccounts = individuals[i].getAccounts();
+            for (int j = 0; j < arrayAccounts.length; j++) {
+                if (compareAccountNumber(arrayAccounts[j], accountNumber)) {
+                    individuals[i].set(j, account);
+                    return arrayAccounts[j];
                 }
             }
         }
         return null;
     }
 
+    private boolean compareAccountNumber(Account account, String accountNumber) {
+        return account != null && account.getNumber().equals(accountNumber);
+    }
 }

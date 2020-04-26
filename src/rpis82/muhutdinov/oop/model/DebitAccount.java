@@ -1,14 +1,17 @@
 package rpis82.muhutdinov.oop.model;
 
-public class DebitAccount implements Account{
+public class DebitAccount implements Account {
     public String number;
     public double balance;
+    private final String EMPTY_NUMBER = "";
+    private final int EMPTY_BALANCE = 0;
 
-    public DebitAccount(){
-        number = "";
-        balance = 0;
+    public DebitAccount() {
+        number = EMPTY_NUMBER;
+        balance = EMPTY_BALANCE;
     }
-    public DebitAccount(String number, double balance){
+
+    public DebitAccount(String number, double balance) {
         this.number = number;
         this.balance = balance;
     }

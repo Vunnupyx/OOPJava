@@ -1,13 +1,12 @@
 package rpis82.muhutdinov.oop;
 
-import rpis82.muhutdinov.oop.model.Account;
-import rpis82.muhutdinov.oop.model.DebitAccount;
-import rpis82.muhutdinov.oop.model.Entity;
+import rpis82.muhutdinov.oop.model.*;
 
 class Test {
 
     public static void main(String[] args) {
         //System.out.println("Я сделяль!");
+        System.out.println("ada");
         lab2tests();
     }
 
@@ -24,64 +23,64 @@ class Test {
 ////        System.out.println("Номер: " + second.getNumber() + " Фамилия: " + second.getBalance());
 ////        System.out.println(first.number);
 //
-//        //Individual
+    //Individual
+
+//        Account a = new Account("1", 20000);
+//        Account b = new Account("2", 20001);
+//        Account c = new Account("3", 20002);
+//        Account d = new Account("4", 20003);
+//        Account e = new Account("5", 20005);
+//        Account f = new Account("6", 20040);
+//        Account g = new Account("7", 20200);
+//        Account h = new Account("8", 20300);
+
+    //
+//        Account[] arrayAccounts = {h, c, d};
 //
-////        Account a = new Account("1", 20000);
-////        Account b = new Account("2", 20001);
-////        Account c = new Account("3", 20002);
-////        Account d = new Account("4", 20003);
-////        Account e = new Account("5", 20005);
-////        Account f = new Account("6", 20040);
-////        Account g = new Account("7", 20200);
-////        Account h = new Account("8", 20300);
+//        //Физическое лицо, имеющее несколько счетов.
+//        Individual ind = new Individual(arrayAccounts);
 //
-////
-////        Account[] arrayAccounts = {h, c, d};
-////
-////        //Физическое лицо, имеющее несколько счетов.
-////        Individual ind = new Individual(arrayAccounts);
-////
-////        //Добавить ссылку
-////        ind.add(a);
-////        ind.add(16, g);
-////        ind.add(e);
-////        ind.add(f);
-////        ind.add(b);
-////
-////        //Получить ссылку
-////        System.out.println(ind.get(16).number);
-////        System.out.println(ind.get("3").number);
-////
-////        //Проверить есть ли ссылка с заданным номером
-////        System.out.println(ind.hasAccount("3"));
-////
-////        //Изменить ссылку по номеру массива
-////        ind.set(16, e);
-////        System.out.println(ind.get(16).number);
-////
-////        //Удалить ссылку
-////        System.out.println(ind.size());
-////        ind.remove(1);
-////        System.out.println(ind.size());
-////        ind.remove("1");
-////        System.out.println(ind.size());
-////
-////        //Получить массив ссылок
-////        Account[] accounts = ind.getAccounts();
-////        for (Account account : accounts) {
-////            System.out.println(account.balance);
-////        }
-////
-////        System.out.println();
-////
-////        //Получить отсортированный массив ссылок
-////        Account[] sort = ind.sortedAccountByBalance();
-////        for (Account account : sort) {
-////            System.out.println(account.balance);
-////        }
-////
-////        //Получить сумму баланса всех ссылок
-////        System.out.println(ind.totalBalance());
+//        //Добавить ссылку
+//        ind.add(a);
+//        ind.add(16, g);
+//        ind.add(e);
+//        ind.add(f);
+//        ind.add(b);
+//
+//        //Получить ссылку
+//        System.out.println(ind.get(16).number);
+//        System.out.println(ind.get("3").number);
+//
+//        //Проверить есть ли ссылка с заданным номером
+//        System.out.println(ind.hasAccount("3"));
+//
+//        //Изменить ссылку по номеру массива
+//        ind.set(16, e);
+//        System.out.println(ind.get(16).number);
+//
+//        //Удалить ссылку
+//        System.out.println(ind.size());
+//        ind.remove(1);
+//        System.out.println(ind.size());
+//        ind.remove("1");
+//        System.out.println(ind.size());
+//
+//        //Получить массив ссылок
+//        Account[] accounts = ind.getAccounts();
+//        for (Account account : accounts) {
+//            System.out.println(account.balance);
+//        }
+//
+//        System.out.println();
+//
+//        //Получить отсортированный массив ссылок
+//        Account[] sort = ind.sortedAccountByBalance();
+//        for (Account account : sort) {
+//            System.out.println(account.balance);
+//        }
+//
+//        //Получить сумму баланса всех ссылок
+//        System.out.println(ind.totalBalance());
 //
 //        //AccountManager
 //
@@ -137,24 +136,38 @@ class Test {
 //        }
 //
 //    }
-    static void lab2tests(){
-        Account first = new DebitAccount("12345",2000);
+    static void lab2tests() {
+        Account first = new DebitAccount("12345", 2000);
+        Account dfirst = new DebitAccount("123457", 2000);
         Account second = new DebitAccount();
+        Account Asecond = new DebitAccount("Получилось", 2000);
         System.out.println("Номер: " + first.getNumber() + " Баланс: " + first.getBalance());
         System.out.println("Номер: " + second.getNumber() + " Фамилия: " + second.getBalance());
         second.setNumber("4321");
         second.setBalance(1200);
         System.out.println("Номер: " + second.getNumber() + " Фамилия: " + second.getBalance());
 
-        Account[] arrayAccounts = {first, second};
+        Account[] arrayAccounts = {dfirst, first, second};
+        Account[] arrayAccountss = {dfirst, second};
+
         Entity entity = new Entity("group", arrayAccounts);
-        entity.addByIndex(0, first);
+        entity.addByIndex(1, Asecond);
+        entity.removeNodeByIndex(1);
+        System.out.println(entity.getName());
+        entity.editNode(1, Asecond);
         entity.printList();
+        Account[] accounts = entity.sortedAccountByBalance();
+        for (Account account : accounts) {
+            System.out.println(account.getNumber());
+        }
+        System.out.println(entity.totalBalance());
+        System.out.println("Раздел");
 
         Entity entity1 = new Entity("group1");
         entity1.addBack(second);
         entity1.addBack(first);
         entity1.printList();
-        System.out.println( entity1.size());
+
+        System.out.println(entity1.size() + "ФИНИШ");
     }
 }
