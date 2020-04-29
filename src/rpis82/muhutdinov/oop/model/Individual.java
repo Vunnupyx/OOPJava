@@ -1,8 +1,9 @@
 package rpis82.muhutdinov.oop.model;
 
-public class Individual {
+public class Individual implements Client {
     public Account[] accounts;
     public int size;
+    public String name;
     private final int DEFAULT_ELEMENTS = 16;
 
     //Конструкторы
@@ -11,19 +12,31 @@ public class Individual {
         size = DEFAULT_ELEMENTS;
     }
 
-    public Individual(int size) {
-        accounts = new Account[size];
+    public Individual(String name, int size) {
+        accounts = new DebitAccount[size];
         this.size = size;
+        this.name = name;
     }
 
-    public Individual(Account[] accounts) {
+    public Individual(String name, Account[] accounts) {
         this.accounts = accounts;
         size = accounts.length;
+        this.name = name;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     // Доп. метод Расширить
     private void extendAccounts() {
-        Account[] newAccount = new Account[accounts.length * 2];
+        Account[] newAccount = new DebitAccount[accounts.length * 2];
         System.arraycopy(accounts, 0, newAccount, 0, accounts.length);
         accounts = newAccount;
     }
@@ -44,14 +57,6 @@ public class Individual {
     }
 
     public boolean add(int index, Account account) {
-        //while расширяет массив до тех пор пока индекс не входит в массив
-
-//        while (accounts.length - 1 < index) {
-//            extendAccounts();
-//        }
-//        if (accounts[index] == null) {
-//            size++;
-//        }
         accounts[index] = account;
         return true;
     }
@@ -59,6 +64,10 @@ public class Individual {
     //Получить ссылку
     public Account get(int index) {
         return accounts[index];
+    }
+
+    private boolean compareAccountNumber(Account account, String accountNumber) {
+        return account != null && account.getNumber().equals(accountNumber);
     }
 
     public Account get(String accountNumber) {
@@ -69,9 +78,6 @@ public class Individual {
         return null;
     }
 
-    private boolean compareAccountNumber(Account account, String accountNumber) {
-        return account != null && account.number.equals(accountNumber);
-    }
 
     //Проверить есть ли ссылка с заданным номером
     public boolean hasAccount(String accountNumber) {
@@ -91,21 +97,17 @@ public class Individual {
 
     //Удалить ссылку
     public Account remove(int index) {
-        if (accounts.length - 1 >= index) {
-            Account lostAccount = accounts[index];
-            System.arraycopy(accounts, index + 1, accounts, index, accounts.length - 1 - index);
-            accounts[accounts.length - 1] = null;
-            size--;
-            return lostAccount;
-        }
-        return null;
+        Account lostAccount = accounts[index];
+        System.arraycopy(accounts, index + 1, accounts, index, accounts.length - 1 - index);
+        accounts[accounts.length - 1] = null;
+        size--;
+        return lostAccount;
     }
 
     public Account remove(String accountNumber) {
         for (int i = 0; i < accounts.length; i++) {
             if (compareAccountNumber(accounts[i], accountNumber)) {
-                Account lostAccount = remove(i);
-                return lostAccount;
+                return remove(i);
             }
         }
         return null;
@@ -119,38 +121,31 @@ public class Individual {
     //возвращающий массив счетов (значений null в массиве быть не должно, его размер должен
     //быть равен числу элементов в исходном массиве)
     public Account[] getAccounts() {
-        Account[] returnAccount = new Account[size];
-        System.arraycopy(accounts, 0, returnAccount, 0, size);
-        //int count = 0;
-//        for (Account account : accounts) {
-//            if (account != null) {
-//                returnAccount[count] = account;
-//                count++;
-//            }
-//        }
-        return returnAccount;
+        Account[] returnAccounts = new Account[size];
+        System.arraycopy(accounts, 0, returnAccounts, 0, size);
+        return returnAccounts;
     }
 
     public Account[] sortedAccountByBalance() {
-        Account[] returnAccount = getAccounts();
+        Account[] returnAccounts = getAccounts();
         Account copy;
-        for (int i = 0; i < returnAccount.length; i++) {
-            for (int j = 0; j < returnAccount.length - 1; j++) {
-                if (returnAccount[j].balance > returnAccount[j + 1].balance) {
-                    copy = returnAccount[j + 1];
-                    returnAccount[j + 1] = returnAccount[j];
-                    returnAccount[j] = copy;
+        for (int i = 0; i < returnAccounts.length; i++) {
+            for (int j = 0; j < returnAccounts.length - 1; j++) {
+                if (returnAccounts[j].getBalance() > returnAccounts[j + 1].getBalance()) {
+                    copy = returnAccounts[j + 1];
+                    returnAccounts[j + 1] = returnAccounts[j];
+                    returnAccounts[j] = copy;
                 }
             }
         }
-        return returnAccount;
+        return returnAccounts;
     }
 
     public double totalBalance() {
         double sumBalance = 0;
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i] != null) {
-                sumBalance += accounts[i].balance;
+                sumBalance += accounts[i].getBalance();
             }
         }
         return sumBalance;
