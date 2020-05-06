@@ -121,4 +121,35 @@ public class AccountManager {
     private boolean compareAccountNumber(Account account, String accountNumber) {
         return account != null && account.getNumber().equals(accountNumber);
     }
+
+    //лаб 3
+    public Client[] getDebtors(){
+        Client[] clients = getClients();
+        Client[] clientsWithNull = new Client[size];
+        int count = 0;
+        for (Client client : clients){
+            if (client.getCreditAccounts().length != 0){
+                clientsWithNull[count] = client;
+                count += 1;
+            }
+        }
+        Client[] clientsWithoutNull = new Client[count];
+        System.arraycopy(clientsWithNull, 0, clientsWithoutNull, 0, count);
+        return clientsWithoutNull;
+    }
+
+    public Client[] getWickedDebtors(){
+        Client[] clients = getDebtors();
+        Client[] clientsWithNull = new Client[clients.length];
+        int count = 0;
+        for (Client client : clients){
+            if (client.getStatus() == ClientStatus.BAD){
+                clientsWithNull[count] = client;
+                count += 1;
+            }
+        }
+        Client[] clientsWithoutNull = new Client[count];
+        System.arraycopy(clientsWithNull, 0, clientsWithoutNull, 0, count);
+        return clientsWithoutNull;
+    }
 }

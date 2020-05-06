@@ -5,6 +5,7 @@ public class Individual implements Client {
     public int size;
     public String name;
     private final int DEFAULT_ELEMENTS = 16;
+    private int creditScore;
 
     //Конструкторы
     public Individual() {
@@ -149,5 +150,33 @@ public class Individual implements Client {
             }
         }
         return sumBalance;
+    }
+
+
+    //лаб 3
+    @Override
+    public int getCreditScores() {
+        return creditScore;
+    }
+
+    @Override
+    public void addCreditScores(int creditScores) {
+        creditScore += creditScores;
+    }
+
+    @Override
+    public Account[] getCreditAccounts() {
+        Account[] accounts = getAccounts();
+        Account[] accountsWithNull = new Account[size];
+        int count = 0;
+        for (Account account : accounts){
+            if (account.getClass().equals(CreditAccount.class)) {
+                accountsWithNull[count] = account;
+                count += 1;
+            }
+        }
+        Account[] accountsWithoutNull = new Account[count];
+        System.arraycopy(accountsWithNull, 0, accountsWithoutNull, 0, count);
+        return accountsWithoutNull;
     }
 }

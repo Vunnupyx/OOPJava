@@ -5,7 +5,7 @@ public class Entity implements Client {
     private int size;
     private Node head;
     private Node tail;
-
+    private int creditScore;
 
     public Entity(String name) {
         this.name = name;
@@ -20,9 +20,6 @@ public class Entity implements Client {
         }
     }
 
-    //Добавляющий узел в конец списка
-    //Добавляющий узел в заданную позицию в списке
-
     //возвращающий ссылку на узел по его номеру в списке
     private Node linkByIndex(int index) {
         Node arrayNode = head.next;
@@ -31,9 +28,6 @@ public class Entity implements Client {
         }
         return arrayNode;
     }
-
-    //удаляющий узел по его номеру в списке
-    //изменяющий узел с заданным номером
 
     private class Node {
         Node next;
@@ -174,6 +168,34 @@ public class Entity implements Client {
             sumBalance += x.value.getBalance();
         }
         return sumBalance;
+    }
+
+
+    //лаб 3
+    @Override
+    public int getCreditScores() {
+        return creditScore;
+    }
+
+    @Override
+    public void addCreditScores(int creditScores) {
+        creditScore += creditScores;
+    }
+
+    @Override
+    public Account[] getCreditAccounts() {
+        Account[] accounts = getAccounts();
+        Account[] accountsWithNull = new Account[size];
+        int count = 0;
+        for (Account account : accounts){
+            if (account.getClass().equals(CreditAccount.class)) {
+                accountsWithNull[count] = account;
+                count += 1;
+            }
+        }
+        Account[] accountsWithoutNull = new Account[count];
+        System.arraycopy(accountsWithNull, 0, accountsWithoutNull, 0, count);
+        return accountsWithoutNull;
     }
 
 }
