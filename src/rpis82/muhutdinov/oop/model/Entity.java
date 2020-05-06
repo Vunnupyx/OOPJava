@@ -208,7 +208,18 @@ public class Entity implements Client {
 
     @Override
     public Account[] getCreditAccounts() {
-        return getAccounts();
+        Account[] accounts = getAccounts();
+        Account[] accountsWithNull = new Account[size];
+        int count = 0;
+        for (Account account : accounts){
+            if (account.getClass().equals(CreditAccount.class)) {
+                accountsWithNull[count] = account;
+                count += 1;
+            }
+        }
+        Account[] accountsWithoutNull = new Account[count];
+        System.arraycopy(accountsWithNull, 0, accountsWithoutNull, 0, count);
+        return accountsWithoutNull;
     }
 }
 

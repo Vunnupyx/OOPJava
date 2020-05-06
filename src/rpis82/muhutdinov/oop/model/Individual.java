@@ -168,16 +168,16 @@ public class Individual implements Client {
     @Override
     public Account[] getCreditAccounts() {
         Account[] accounts = getAccounts();
-        Account[] accountsNotFormatted = new Account[size];
+        Account[] accountsWithNull = new Account[size];
         int count = 0;
         for (Account account : accounts){
             if (account.getClass().equals(CreditAccount.class)) {
-                accountsNotFormatted[count] = account;
+                accountsWithNull[count] = account;
                 count += 1;
             }
         }
-        Account[] returnAccounts = new Account[count];
-        System.arraycopy(accountsNotFormatted, 0, returnAccounts, 0, size);
-        return returnAccounts;
+        Account[] accountsWithoutNull = new Account[count];
+        System.arraycopy(accountsWithNull, 0, accountsWithoutNull, 0, count);
+        return accountsWithoutNull;
     }
 }
