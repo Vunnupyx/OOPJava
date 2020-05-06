@@ -1,5 +1,7 @@
 package rpis82.muhutdinov.oop.model;
 
+import java.util.Arrays;
+
 public interface Client {
     boolean add(Account account);
 
@@ -28,5 +30,24 @@ public interface Client {
     String getName();
 
     void setName(String name);
+
+    int getCreditScores();
+
+    void addCreditScores(int creditScores);
+
+    default ClientStatus getStatus() {
+        for (ClientStatus clientStatus : ClientStatus.values()) {
+            if (clientStatus.getCreditScoreBound() == getCreditScores())
+                return clientStatus;
+        }
+        throw new RuntimeException();
+
+        //или
+        //        return Arrays.stream(ClientStatus.values())
+        //                .filter(status -> status.getCreditScoreBound() == getCreditScores())
+        //                .findFirst().orElseThrow(RuntimeException::new);
+    }
+
+    Account[] getCreditAccounts();
 
 }

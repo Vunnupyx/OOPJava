@@ -4,24 +4,28 @@ public class Individual implements Client {
     public Account[] accounts;
     public int size;
     public String name;
+    private int creditScore;
     private final int DEFAULT_ELEMENTS = 16;
 
     //Конструкторы
     public Individual() {
         accounts = new Account[DEFAULT_ELEMENTS];
         size = DEFAULT_ELEMENTS;
+        creditScore = 0;
     }
 
     public Individual(String name, int size) {
         accounts = new DebitAccount[size];
         this.size = size;
         this.name = name;
+        creditScore = 0;
     }
 
     public Individual(String name, Account[] accounts) {
         this.accounts = accounts;
         size = accounts.length;
         this.name = name;
+        creditScore = 0;
     }
 
 
@@ -149,5 +153,31 @@ public class Individual implements Client {
             }
         }
         return sumBalance;
+    }
+
+    @Override
+    public int getCreditScores() {
+        return creditScore;
+    }
+
+    @Override
+    public void addCreditScores(int creditScores) {
+        creditScore += creditScores;
+    }
+
+    @Override
+    public Account[] getCreditAccounts() {
+        Account[] accounts = getAccounts();
+        Account[] accountsNotFormatted = new Account[size];
+        int count = 0;
+        for (Account account : accounts){
+            if (account.getClass().equals(CreditAccount.class)) {
+                accountsNotFormatted[count] = account;
+                count += 1;
+            }
+        }
+        Account[] returnAccounts = new Account[count];
+        System.arraycopy(accountsNotFormatted, 0, returnAccounts, 0, size);
+        return returnAccounts;
     }
 }

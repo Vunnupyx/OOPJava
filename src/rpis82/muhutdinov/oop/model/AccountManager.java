@@ -123,4 +123,15 @@ public class AccountManager {
     private boolean compareAccountNumber(Account account, String accountNumber) {
         return account != null && account.getNumber().equals(accountNumber);
     }
+
+    public Client[] getDebtors(){
+        Account[] accountsCredit;
+        Client[] clients = getClients();
+        for (Client client : clients){
+            Account[] accounts = client.getAccounts();
+        }
+        return null;
+    }
+
+    public Client[] getWickedDebtors(){return null;}
 }

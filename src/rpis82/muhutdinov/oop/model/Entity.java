@@ -8,12 +8,14 @@ public class Entity implements Client {
     private int size;
     private Node head;
     private Node tail;
+    private int creditScore;
 
 
     public Entity(String name) {
         this.name = name;
         this.head = null;
         this.tail = null;
+        creditScore = 0;
     }
 
     public Entity(String name, Account[] accounts) {
@@ -21,10 +23,11 @@ public class Entity implements Client {
         for (Account account : accounts) {
             addBack(account);
         }
+        creditScore = 0;
     }
 
     //Добавляющий узел в конец списка
-    public void addBack(Account account) {
+    private void addBack(Account account) {
         Node newNode = new Node(null, account);
         Node last = tail;
         tail = newNode;
@@ -37,7 +40,7 @@ public class Entity implements Client {
     }
 
     //Добавляющий узел в заданную позицию в списке
-    public void addByIndex(int index, Account account) {
+    private void addByIndex(int index, Account account) {
         if (index == size) {
             addBack(account);
         } else {
@@ -48,7 +51,7 @@ public class Entity implements Client {
     }
 
     //возвращающий ссылку на узел по его номеру в списке
-    public Node linkByIndex(int index) {
+    private Node linkByIndex(int index) {
         Node arrayNode = head.next;
         for (int i = 0; i < index; i++) {
             arrayNode = arrayNode.next;
@@ -57,7 +60,7 @@ public class Entity implements Client {
     }
 
     //удаляющий узел по его номеру в списке
-    public void removeNodeByIndex(int index) {
+    private void removeNodeByIndex(int index) {
         Node previousLink = linkByIndex(index - 1);
         Node nextLink = linkByIndex(index + 1);
         previousLink.next = new Node(nextLink.next, nextLink.value);
@@ -65,17 +68,9 @@ public class Entity implements Client {
     }
 
     //изменяющий узел с заданным номером
-    public void editNode(int index, Account account) {
+    private void editNode(int index, Account account) {
         Node editLink = linkByIndex(index);
         editLink.value = account;
-    }
-
-    public void printList() {
-        Node t = head.next;
-        while (t != null) {
-            System.out.println(t.value.getNumber());
-            t = t.next;
-        }
     }
 
     private class Node {
@@ -201,5 +196,19 @@ public class Entity implements Client {
         return sumBalance;
     }
 
+    @Override
+    public int getCreditScores() {
+        return creditScore;
+    }
+
+    @Override
+    public void addCreditScores(int creditScores) {
+        creditScore += creditScores;
+    }
+
+    @Override
+    public Account[] getCreditAccounts() {
+        return getAccounts();
+    }
 }
 

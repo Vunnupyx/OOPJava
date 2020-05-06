@@ -6,8 +6,7 @@ class Test {
 
     public static void main(String[] args) {
         //System.out.println("Я сделяль!");
-        System.out.println("ada");
-        lab2tests();
+        lab3tests();
     }
 
 //    static void lab1tests() {
@@ -136,38 +135,74 @@ class Test {
 //        }
 //
 //    }
-    static void lab2tests() {
-        Account first = new DebitAccount("12345", 2000);
-        Account dfirst = new DebitAccount("123457", 2000);
-        Account second = new DebitAccount();
-        Account Asecond = new DebitAccount("Получилось", 2000);
-        System.out.println("Номер: " + first.getNumber() + " Баланс: " + first.getBalance());
-        System.out.println("Номер: " + second.getNumber() + " Фамилия: " + second.getBalance());
-        second.setNumber("4321");
-        second.setBalance(1200);
-        System.out.println("Номер: " + second.getNumber() + " Фамилия: " + second.getBalance());
+//    static void lab2tests() {
+//        Account first = new DebitAccount("12345", 2000);
+//        Account dfirst = new DebitAccount("123457", 2000);
+//        Account second = new DebitAccount();
+//        Account Asecond = new DebitAccount("Получилось", 2000);
+//        System.out.println("Номер: " + first.getNumber() + " Баланс: " + first.getBalance());
+//        System.out.println("Номер: " + second.getNumber() + " Фамилия: " + second.getBalance());
+//        second.setNumber("4321");
+//        second.setBalance(1200);
+//        System.out.println("Номер: " + second.getNumber() + " Фамилия: " + second.getBalance());
+//
+//        Account[] arrayAccounts = {dfirst, first, second};
+//        Account[] arrayAccountss = {dfirst, second};
+//
+//        Entity entity = new Entity("group", arrayAccounts);
+//        entity.addByIndex(1, Asecond);
+//        entity.removeNodeByIndex(1);
+//        System.out.println(entity.getName());
+//        entity.editNode(1, Asecond);
+//        entity.printList();
+//        Account[] accounts = entity.sortedAccountByBalance();
+//        for (Account account : accounts) {
+//            System.out.println(account.getNumber());
+//        }
+//        System.out.println(entity.totalBalance());
+//        System.out.println("Раздел");
+//
+//        Entity entity1 = new Entity("group1");
+//        entity1.addBack(second);
+//        entity1.addBack(first);
+//        entity1.printList();
+//
+//        System.out.println(entity1.size() + "ФИНИШ");
+//    }
+    static void lab3tests(){
+        Account debitAccount = new DebitAccount();
+        Account debitAccountSecond = new DebitAccount("1234", 1000);
 
-        Account[] arrayAccounts = {dfirst, first, second};
-        Account[] arrayAccountss = {dfirst, second};
+        Account account = new DebitAccount("5678", 2000);
+        Account account1 = new DebitAccount("8900", 3000);
 
-        Entity entity = new Entity("group", arrayAccounts);
-        entity.addByIndex(1, Asecond);
-        entity.removeNodeByIndex(1);
-        System.out.println(entity.getName());
-        entity.editNode(1, Asecond);
-        entity.printList();
-        Account[] accounts = entity.sortedAccountByBalance();
-        for (Account account : accounts) {
-            System.out.println(account.getNumber());
-        }
-        System.out.println(entity.totalBalance());
-        System.out.println("Раздел");
+        Account creditAccount = new CreditAccount(debitAccount.getNumber(), debitAccount.getBalance(), 25);
+        Account creditAccount2 = new CreditAccount(debitAccountSecond.getNumber(), debitAccountSecond.getBalance(), 35);
 
-        Entity entity1 = new Entity("group1");
-        entity1.addBack(second);
-        entity1.addBack(first);
-        entity1.printList();
+        System.out.println(account.getClass().equals(CreditAccount.class);
 
-        System.out.println(entity1.size() + "ФИНИШ");
+
+        Account[] accounts = {debitAccount, debitAccountSecond};
+        Account[] accounts1 = {account,account1};
+        Account[] accounts2s = {creditAccount, creditAccount2};
+
+
+        Client individual = new Individual("Yes", accounts);
+        Client individual1 = new Individual("Not", accounts1);
+        Client clientr = new Individual("YesYes", accounts2s);
+
+        Client[] clients = {individual, individual1, clientr};
+
+                                AccountManager  accountManager = new AccountManager(clients);
+
+//        Client[] clientsCredit = accountManager.getClients();
+//        for (Client client : clientsCredit) {
+//            System.out.println(client.getName());
+//            Account[] accounts2 = client.getAccounts();
+//            for (Account account2 : accounts2){
+//                System.out.println(account2.getNumber());
+//            }
+//        }
+        //System.out.println(creditAccount.getAPR());
     }
 }
