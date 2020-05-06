@@ -16,36 +16,15 @@ public class Entity implements Client {
     public Entity(String name, Account[] accounts) {
         this.name = name;
         for (Account account : accounts) {
-            addBack(account);
+            add(account);
         }
     }
 
     //Добавляющий узел в конец списка
-    public void addBack(Account account) {
-        Node newNode = new Node(null, account);
-        Node last = tail;
-        tail = newNode;
-        if (last == null) {
-            head = new Node(newNode, null);
-        } else {
-            last.next = newNode;
-        }
-        size++;
-    }
-
     //Добавляющий узел в заданную позицию в списке
-    public void addByIndex(int index, Account account) {
-        if (index == size) {
-            addBack(account);
-        } else {
-            Node previousLink = linkByIndex(index - 1);
-            previousLink.next = new Node(previousLink.next, account);
-        }
-        size++;
-    }
 
     //возвращающий ссылку на узел по его номеру в списке
-    public Node linkByIndex(int index) {
+    private Node linkByIndex(int index) {
         Node arrayNode = head.next;
         for (int i = 0; i < index; i++) {
             arrayNode = arrayNode.next;
@@ -54,26 +33,7 @@ public class Entity implements Client {
     }
 
     //удаляющий узел по его номеру в списке
-    public void removeNodeByIndex(int index) {
-        Node previousLink = linkByIndex(index - 1);
-        Node nextLink = linkByIndex(index + 1);
-        previousLink.next = new Node(nextLink.next, nextLink.value);
-        size--;
-    }
-
     //изменяющий узел с заданным номером
-    public void editNode(int index, Account account) {
-        Node editLink = linkByIndex(index);
-        editLink.value = account;
-    }
-
-    public void printList() {
-        Node t = head.next;
-        while (t != null) {
-            System.out.println(t.value.getNumber());
-            t = t.next;
-        }
-    }
 
     private class Node {
         Node next;
@@ -97,13 +57,27 @@ public class Entity implements Client {
 
     @Override
     public boolean add(Account account) {
-        addBack(account);
+        Node newNode = new Node(null, account);
+        Node last = tail;
+        tail = newNode;
+        if (last == null) {
+            head = new Node(newNode, null);
+        } else {
+            last.next = newNode;
+        }
+        size++;
         return true;
     }
 
     @Override
     public boolean add(int index, Account account) {
-        addByIndex(index, account);
+        if (index == size) {
+            add(account);
+        } else {
+            Node previousLink = linkByIndex(index - 1);
+            previousLink.next = new Node(previousLink.next, account);
+        }
+        size++;
         return true;
     }
 
@@ -134,14 +108,18 @@ public class Entity implements Client {
     @Override
     public Account set(int index, Account account) {
         Node lostLink = linkByIndex(index);
-        editNode(index, account);
+        Node editLink = linkByIndex(index);
+        editLink.value = account;
         return lostLink.value;
     }
 
     @Override
     public Account remove(int index) {
         Node lostLink = linkByIndex(index);
-        removeNodeByIndex(index);
+        Node previousLink = linkByIndex(index - 1);
+        Node nextLink = linkByIndex(index + 1);
+        previousLink.next = new Node(nextLink.next, nextLink.value);
+        size--;
         return lostLink.value;
     }
 
