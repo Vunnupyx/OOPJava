@@ -46,18 +46,14 @@ public interface Client {
             return ClientStatus.GOLD;
 
         return ClientStatus.PLATINUM;
-//        for (ClientStatus clientStatus : ClientStatus.values()) {
-//            if (clientStatus.getCreditScoreBound() == getCreditScores())
-//                return clientStatus;
-//        }
-//        throw new RuntimeException();
-
-        //или
-        //        return Arrays.stream(ClientStatus.values())
-        //                .filter(status -> status.getCreditScoreBound() == getCreditScores())
-        //                .findFirst().orElseThrow(RuntimeException::new);
     }
 
     Account[] getCreditAccounts();
+
+    boolean remove(Account account);
+
+    int indexOf(Account account);
+
+    double debtTotal();
 
 }

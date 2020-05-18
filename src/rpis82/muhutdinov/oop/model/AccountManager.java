@@ -152,4 +152,32 @@ public class AccountManager {
         System.arraycopy(clientsWithNull, 0, clientsWithoutNull, 0, count);
         return clientsWithoutNull;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        Client[] clients = getClients();
+        for (Client client : clients)
+            stringBuilder.append(client.toString()).append("\n");
+        return stringBuilder.toString();
+    }
+
+    public boolean remove(Client client){
+        int index = indexOf(client);
+        if (index != -1) {
+            remove(index);
+            return true;
+        }
+        return false;
+    }
+
+    public int indexOf(Client client){
+        Client[] clients = getClients();
+        for (int i = 0; i < clients.length; i++) {
+            if (clients[i].equals(client)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }

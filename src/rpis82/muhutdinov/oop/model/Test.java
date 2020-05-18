@@ -6,51 +6,77 @@ import rpis82.muhutdinov.oop.model.Individual;
 
 import java.sql.SQLOutput;
 import java.util.Arrays;
+import java.util.Objects;
 
 class Test {
 
     public static void main(String[] args) {
         //System.out.println("Я сделяль!");
-        lab3tests();
+        lab4tests();
     }
 
-    static void lab3tests(){
-        Account debitAccount = new DebitAccount();
-        Account debitAccountSecond = new DebitAccount("1234", 1000);
+    static void lab4tests(){
+        AbstractAccount ada = new AbstractAccount("5678", 2000);
+
+        System.out.println(ada.toString());
+        System.out.println(ada.hashCode());
+        System.out.println(ada.toString());
+        System.out.println(ada.hashCode());
+        try {
+            Account cloneAccount = ada.clone();
+            System.out.println(cloneAccount.toString());
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("<-------DebitAccount------>");
+        DebitAccount adss = new DebitAccount("5555", 2000);
+
+        try {
+            DebitAccount cloneAccount2 = adss.clone();
+            System.out.println(cloneAccount2.toString());
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("<-------CreditAccount------>");
+        Account creditAccount = new CreditAccount(ada.getNumber(), ada.getBalance(), 25);
+        CreditAccount creditAccount2 = new CreditAccount(adss.getNumber(), adss.getBalance(), 35);
+        System.out.println("EQUALS " + creditAccount.equals(creditAccount2));
+        try {
+            CreditAccount cloneCredit = creditAccount2.clone();
+            System.out.println(cloneCredit.toString());
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("<-------Individual------>");
+        Account[] accounts = {ada, adss};
+        Individual individual = new Individual("MyName", accounts);
+
+        individual.addCreditScores(2);
+        System.out.println(individual.toString());
+        System.out.println(individual.hashCode());
+
+
+        System.out.println("<-------AccountManger------>");
 
         Account account = new DebitAccount("5678", 2000);
         Account account1 = new DebitAccount("8900", 3000);
-
-        Account creditAccount = new CreditAccount(account.getNumber(), account.getBalance(), 25);
-        Account creditAccount2 = new CreditAccount(debitAccountSecond.getNumber(), debitAccountSecond.getBalance(), 35);
-
-
-
-        Account[] accounts = {debitAccount, debitAccountSecond};
         Account[] accounts1 = {account,account1};
-        Account[] accounts2s = {creditAccount, creditAccount2, account};
-
-
-        Client individual = new Individual("Yes", accounts);
-        Client individual1 = new Individual("Not", accounts1);
-        Client clientr = new Individual("YesYes", accounts2s);
-
-        clientr.addCreditScores(-3);
-        individual.addCreditScores(-3);
-        System.out.println(individual.getStatus().name());
-
-        Account[] accounts2 = individual1.getCreditAccounts();
-        System.out.println(accounts2.length);
-        for (Account account2 : accounts2){
-            System.out.println(account2.getNumber());
-        }
-
-        Client[] clients = {individual, individual1, clientr};
+        Client individual1 = new Individual("sada", accounts1);
+        Client[] clients = {individual, individual1};
 
         AccountManager  accountManager = new AccountManager(clients);
-        Client[] clients1 = accountManager.getWickedDebtors();
-        for (Client client : clients1){
-            System.out.println(client.getName());
-        }
+
+        System.out.println(accountManager.toString());
+
+        System.out.println("<-------Individual and Entity------>");
+
+        System.out.println(individual.debtTotal());
+        Account[] accounts2 = {creditAccount, creditAccount2};
+        Client client = new Individual("кредиты", accounts2);
+        System.out.println(client.debtTotal());
+        System.out.println("<-------Finish------>");
+
     }
 }

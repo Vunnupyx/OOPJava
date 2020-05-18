@@ -1,6 +1,9 @@
 package rpis82.muhutdinov.oop.model;
 
-public class AbstractAccount implements Account {
+import java.util.Objects;
+import java.lang.Cloneable;
+public class AbstractAccount implements Account, Cloneable {
+
     private String number;
     private double balance;
     private final String EMPTY_NUMBER = "";
@@ -30,5 +33,31 @@ public class AbstractAccount implements Account {
 
     public void setBalance(double balance) {
         this.balance = balance;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("number: <%s> balance: <%s>", number, balance);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractAccount that = (AbstractAccount) o;
+        return Double.compare(that.balance, balance) == 0 &&
+                Objects.equals(number, that.number);
+    }
+
+    @Override
+    public int hashCode() {
+        return number.hashCode() * Double.hashCode(balance);
+    }
+
+
+    @Override
+    protected AbstractAccount clone() throws CloneNotSupportedException {
+        //return new AbstractAccount(this.number, this.balance);
+        return (AbstractAccount) super.clone();
     }
 }

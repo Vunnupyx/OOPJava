@@ -1,5 +1,8 @@
 package rpis82.muhutdinov.oop.model;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class Entity implements Client {
     private String name;
     private int size;
@@ -198,4 +201,75 @@ public class Entity implements Client {
         return accountsWithoutNull;
     }
 
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder("Client");
+        stringBuilder.append("\nname: ").append(this.name);
+        stringBuilder.append("\ncreditScore: ").append(this.creditScore);
+        Account[] accounts = getAccounts();
+        for (Account account : accounts)
+            stringBuilder.append("\n").append(account.toString());
+        stringBuilder.append("\ntotal: ").append(totalBalance());
+        return stringBuilder.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int xorAccountsHash = 0;
+        Account[] accounts = getAccounts();
+        for (int i = 0; i < size; i++)
+        {
+            xorAccountsHash ^= accounts[i].hashCode();
+        }
+        return xorAccountsHash ^ name.hashCode() ^ Integer.hashCode(creditScore);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Entity that = (Entity) o;
+        return size == that.size &&
+                creditScore == that.creditScore &&
+                Arrays.equals(getAccounts(), that.getAccounts()) &&
+                Objects.equals(name, that.name);
+    }
+
+    @Override
+    public Entity clone() throws CloneNotSupportedException {
+        //return new CreditAccount(this.getNumber(), this.getBalance(), this.APR);
+        return (Entity) super.clone();
+    }
+
+    @Override
+    public boolean remove(Account account) {
+        int index = indexOf(account);
+        if (index != -1) {
+            remove(index);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int indexOf(Account account) {
+        Account[] accounts = getAccounts();
+        for (int i = 0; i < accounts.length; i++) {
+            if (accounts[i].equals(account)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public double debtTotal() {
+        double sumDebt = 0;
+        Account[] accounts = getCreditAccounts();
+        for (Account account : accounts)
+            sumDebt += account.getBalance();
+
+        return sumDebt;
+    }
 }

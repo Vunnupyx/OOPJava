@@ -1,6 +1,11 @@
 package rpis82.muhutdinov.oop.model;
 
-public class Individual implements Client {
+
+import java.util.Arrays;
+import java.util.Objects;
+
+public class Individual implements Client, Cloneable {
+
     public Account[] accounts;
     public int size;
     public String name;
@@ -169,7 +174,7 @@ public class Individual implements Client {
         Account[] accounts = getAccounts();
         Account[] accountsWithNull = new Account[size];
         int count = 0;
-        for (Account account : accounts){
+        for (Account account : accounts) {
             if (account.getClass().equals(CreditAccount.class)) {
                 accountsWithNull[count] = account;
                 count += 1;
@@ -178,5 +183,73 @@ public class Individual implements Client {
         Account[] accountsWithoutNull = new Account[count];
         System.arraycopy(accountsWithNull, 0, accountsWithoutNull, 0, count);
         return accountsWithoutNull;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder("Client");
+        stringBuilder.append("\nname: ").append(this.name);
+        stringBuilder.append("\ncreditScore: ").append(this.creditScore);
+        Account[] accounts = getAccounts();
+        for (Account account : accounts)
+            stringBuilder.append("\n").append(account.toString());
+        stringBuilder.append("\ntotal: ").append(totalBalance());
+        return stringBuilder.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int xorAccountsHash = 0;
+        for (int i = 0; i < size; i++) {
+            xorAccountsHash ^= accounts[i].hashCode();
+        }
+        return xorAccountsHash ^ name.hashCode() ^ Integer.hashCode(creditScore);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Individual that = (Individual) o;
+        return size == that.size &&
+                creditScore == that.creditScore &&
+                Arrays.equals(accounts, that.accounts) &&
+                Objects.equals(name, that.name);
+    }
+
+    @Override
+    public Individual clone() throws CloneNotSupportedException {
+        //return new CreditAccount(this.getNumber(), this.getBalance(), this.APR);
+        return (Individual) super.clone();
+    }
+
+    @Override
+    public boolean remove(Account account) {
+        int index = indexOf(account);
+        if (index != -1) {
+            remove(index);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int indexOf(Account account) {
+        for (int i = 0; i < accounts.length; i++) {
+            if (accounts[i].equals(account)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public double debtTotal() {
+        double sumDebt = 0;
+        Account[] accounts = getCreditAccounts();
+        for (Account account : accounts)
+            sumDebt += account.getBalance();
+
+        return sumDebt;
     }
 }
