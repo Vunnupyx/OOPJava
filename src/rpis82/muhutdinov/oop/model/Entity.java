@@ -1,6 +1,7 @@
 package rpis82.muhutdinov.oop.model;
 
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class Entity implements Client {
@@ -16,7 +17,7 @@ public class Entity implements Client {
         this.tail = null;
     }
 
-    public Entity(String name, Account[] accounts) {
+    public Entity(String name, Account[] accounts) throws DublicateAccountNumberException {
         this.name = name;
         for (Account account : accounts) {
             add(account);
@@ -24,7 +25,9 @@ public class Entity implements Client {
     }
 
     //возвращающий ссылку на узел по его номеру в списке
-    private Node linkByIndex(int index) {
+    private Node linkByIndex(int index) throws IndexOutOfBoundsException {
+        if (index > this.size || index <= 0)
+            throw new IndexOutOfBoundsException("Index is not acceptable");
         Node arrayNode = head.next;
         for (int i = 0; i < index; i++) {
             arrayNode = arrayNode.next;
@@ -48,12 +51,16 @@ public class Entity implements Client {
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(String name) throws NullPointerException {
+        Objects.requireNonNull(name, "Name is null");
         this.name = name;
     }
 
     @Override
-    public boolean add(Account account) {
+    public boolean add(Account account) throws NullPointerException, DublicateAccountNumberException {
+        Objects.requireNonNull(account, "account is null");
+        if (hasAccount(account.getNumber()))
+            throw new DublicateAccountNumberException("Account number exists");
         Node newNode = new Node(null, account);
         Node last = tail;
         tail = newNode;
@@ -67,7 +74,12 @@ public class Entity implements Client {
     }
 
     @Override
-    public boolean add(int index, Account account) {
+    public boolean add(int index, Account account) throws IndexOutOfBoundsException, NullPointerException, DublicateAccountNumberException {
+        Objects.requireNonNull(account, "account is null");
+        if (index > this.size || index <= 0)
+            throw new IndexOutOfBoundsException("Index is not acceptable");
+        if (hasAccount(account.getNumber()))
+            throw new DublicateAccountNumberException("Account number exists");
         if (index == size) {
             add(account);
         } else {
@@ -79,22 +91,28 @@ public class Entity implements Client {
     }
 
     @Override
-    public Account get(int index) {
+    public Account get(int index) throws IndexOutOfBoundsException {
+        if (index > this.size || index <= 0)
+            throw new IndexOutOfBoundsException("Index is not acceptable");
         Node node = linkByIndex(index);
         return node.value;
     }
 
     @Override
-    public Account get(String accountNumber) {
+    public Account get(String accountNumber) throws InvalidAccountNumberException, NullPointerException, NoSuchElementException {
+        Objects.requireNonNull(accountNumber, "AccountNumber is null");
+        InvalidAccountNumberException.NumberException(accountNumber);
         for (Node x = head.next; x != null; x = x.next) {
             if (x.value.getNumber().equals(accountNumber))
                 return x.value;
         }
-        return null;
+        throw new NoSuchElementException("Number not found");
     }
 
     @Override
-    public boolean hasAccount(String accountNumber) {
+    public boolean hasAccount(String accountNumber) throws InvalidAccountNumberException, NullPointerException {
+        Objects.requireNonNull(accountNumber, "accountNumber is null");
+        InvalidAccountNumberException.NumberException(accountNumber);
         for (Node x = head.next; x != null; x = x.next) {
             if (x.value.getNumber().equals(accountNumber))
                 return true;
@@ -103,7 +121,12 @@ public class Entity implements Client {
     }
 
     @Override
-    public Account set(int index, Account account) {
+    public Account set(int index, Account account) throws IndexOutOfBoundsException, NullPointerException, DublicateAccountNumberException {
+        Objects.requireNonNull(account, "account is null");
+        if (index > this.size || index <= 0)
+            throw new IndexOutOfBoundsException("Index is not acceptable");
+        if (hasAccount(account.getNumber()))
+            throw new DublicateAccountNumberException("Account number exists");
         Node lostLink = linkByIndex(index);
         Node editLink = linkByIndex(index);
         editLink.value = account;
@@ -111,7 +134,9 @@ public class Entity implements Client {
     }
 
     @Override
-    public Account remove(int index) {
+    public Account remove(int index) throws IndexOutOfBoundsException {
+        if (index > this.size || index <= 0)
+            throw new IndexOutOfBoundsException("Index is not acceptable");
         Node lostLink = linkByIndex(index);
         Node previousLink = linkByIndex(index - 1);
         Node nextLink = linkByIndex(index + 1);
@@ -121,7 +146,9 @@ public class Entity implements Client {
     }
 
     @Override
-    public Account remove(String accountNumber) {
+    public Account remove(String accountNumber) throws InvalidAccountNumberException, NullPointerException, NoSuchElementException {
+        Objects.requireNonNull(accountNumber, "accountNumber is null");
+        InvalidAccountNumberException.NumberException(accountNumber);
         Node link = head.next;
         for (int i = 0; i < size; i++) {
             if (link.value.getNumber().equals(accountNumber)) {
@@ -129,7 +156,7 @@ public class Entity implements Client {
             }
             link = link.next;
         }
-        return null;
+        throw new NoSuchElementException("Number not found");
     }
 
     @Override
@@ -190,7 +217,7 @@ public class Entity implements Client {
         Account[] accounts = getAccounts();
         Account[] accountsWithNull = new Account[size];
         int count = 0;
-        for (Account account : accounts){
+        for (Account account : accounts) {
             if (account.getClass().equals(CreditAccount.class)) {
                 accountsWithNull[count] = account;
                 count += 1;
@@ -218,8 +245,7 @@ public class Entity implements Client {
     public int hashCode() {
         int xorAccountsHash = 0;
         Account[] accounts = getAccounts();
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             xorAccountsHash ^= accounts[i].hashCode();
         }
         return xorAccountsHash ^ name.hashCode() ^ Integer.hashCode(creditScore);
@@ -243,7 +269,8 @@ public class Entity implements Client {
     }
 
     @Override
-    public boolean remove(Account account) {
+    public boolean remove(Account account) throws NullPointerException {
+        Objects.requireNonNull(account, "account is null");
         int index = indexOf(account);
         if (index != -1) {
             remove(index);
@@ -253,7 +280,8 @@ public class Entity implements Client {
     }
 
     @Override
-    public int indexOf(Account account) {
+    public int indexOf(Account account) throws NullPointerException {
+        Objects.requireNonNull(account, "account is null");
         Account[] accounts = getAccounts();
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i].equals(account)) {

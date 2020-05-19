@@ -1,5 +1,7 @@
 package rpis82.muhutdinov.oop.model;
 
+import java.time.LocalDate;
+
 public interface Account {
     String getNumber();
 
@@ -8,4 +10,12 @@ public interface Account {
     double getBalance();
 
     void setBalance(double balance);
+
+    LocalDate getCreationDate();
+
+    LocalDate getExpirationDate();
+
+    void setExpirationDate(LocalDate expirationDate);
+
+    int monthesQuantityBeforeExpiration();
 }

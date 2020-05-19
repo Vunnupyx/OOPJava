@@ -1,7 +1,7 @@
 package rpis82.muhutdinov.oop.model;
 
-
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class Individual implements Client, Cloneable {
@@ -36,7 +36,8 @@ public class Individual implements Client, Cloneable {
     }
 
 
-    public void setName(String name) {
+    public void setName(String name) throws NullPointerException {
+        Objects.requireNonNull(name, "Name is null");
         this.name = name;
     }
 
@@ -48,7 +49,11 @@ public class Individual implements Client, Cloneable {
     }
 
     //Добавить ссылку
-    public boolean add(Account account) {
+    @Override
+    public boolean add(Account account) throws NullPointerException, DublicateAccountNumberException {
+        Objects.requireNonNull(account, "Account is null");
+        if (hasAccount(account.getNumber()))
+            throw new DublicateAccountNumberException("Account number exists");
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i] == null) {
                 accounts[i] = account;
@@ -62,13 +67,20 @@ public class Individual implements Client, Cloneable {
         return true;
     }
 
-    public boolean add(int index, Account account) {
+    public boolean add(int index, Account account) throws IndexOutOfBoundsException, NullPointerException, DublicateAccountNumberException {
+        Objects.requireNonNull(account, "Account is null");
+        if (index > this.size || index <= 0)
+            throw new IndexOutOfBoundsException("Index is not acceptable");
+        if (hasAccount(account.getNumber()))
+            throw new DublicateAccountNumberException("Account number exists");
         accounts[index] = account;
         return true;
     }
 
     //Получить ссылку
-    public Account get(int index) {
+    public Account get(int index) throws IndexOutOfBoundsException {
+        if (index > this.size || index <= 0)
+            throw new IndexOutOfBoundsException("Index is not acceptable");
         return accounts[index];
     }
 
@@ -76,17 +88,21 @@ public class Individual implements Client, Cloneable {
         return account != null && account.getNumber().equals(accountNumber);
     }
 
-    public Account get(String accountNumber) {
+    public Account get(String accountNumber) throws InvalidAccountNumberException, NullPointerException, NoSuchElementException {
+        Objects.requireNonNull(accountNumber, "AccountNumber is null");
+        InvalidAccountNumberException.NumberException(accountNumber);
         for (Account account : accounts) {
             if (compareAccountNumber(account, accountNumber))
                 return account;
         }
-        return null;
+        throw new NoSuchElementException("Number not found");
     }
 
 
     //Проверить есть ли ссылка с заданным номером
-    public boolean hasAccount(String accountNumber) {
+    public boolean hasAccount(String accountNumber) throws InvalidAccountNumberException, NullPointerException {
+        Objects.requireNonNull(accountNumber, "AccountNumber is null");
+        InvalidAccountNumberException.NumberException(accountNumber);
         for (Account account : accounts) {
             if (compareAccountNumber(account, accountNumber))
                 return true;
@@ -95,14 +111,21 @@ public class Individual implements Client, Cloneable {
     }
 
     //Изменить ссылку по номеру массива
-    public Account set(int index, Account account) {
+    public Account set(int index, Account account) throws IndexOutOfBoundsException, NullPointerException, DublicateAccountNumberException {
+        Objects.requireNonNull(account, "Account is null");
+        if (index > this.size || index <= 0)
+            throw new IndexOutOfBoundsException("Index is not acceptable");
+        if (hasAccount(account.getNumber()))
+            throw new DublicateAccountNumberException("Account number exists");
         Account lostAccount = accounts[index];
         accounts[index] = account;
         return lostAccount;
     }
 
     //Удалить ссылку
-    public Account remove(int index) {
+    public Account remove(int index) throws IndexOutOfBoundsException {
+        if (index > this.size || index <= 0)
+            throw new IndexOutOfBoundsException("Index is not acceptable");
         Account lostAccount = accounts[index];
         System.arraycopy(accounts, index + 1, accounts, index, accounts.length - 1 - index);
         accounts[accounts.length - 1] = null;
@@ -110,13 +133,15 @@ public class Individual implements Client, Cloneable {
         return lostAccount;
     }
 
-    public Account remove(String accountNumber) {
+    public Account remove(String accountNumber) throws InvalidAccountNumberException, NullPointerException, NoSuchElementException {
+        Objects.requireNonNull(accountNumber, "AccountNumber is null");
+        InvalidAccountNumberException.NumberException(accountNumber);
         for (int i = 0; i < accounts.length; i++) {
             if (compareAccountNumber(accounts[i], accountNumber)) {
                 return remove(i);
             }
         }
-        return null;
+        throw new NoSuchElementException("Number not found");
     }
 
     // возвращающий число физ. лиц
@@ -224,7 +249,8 @@ public class Individual implements Client, Cloneable {
     }
 
     @Override
-    public boolean remove(Account account) {
+    public boolean remove(Account account) throws NullPointerException {
+        Objects.requireNonNull(account, "Account is null");
         int index = indexOf(account);
         if (index != -1) {
             remove(index);
@@ -234,7 +260,8 @@ public class Individual implements Client, Cloneable {
     }
 
     @Override
-    public int indexOf(Account account) {
+    public int indexOf(Account account) throws NullPointerException {
+        Objects.requireNonNull(account, "Account is null");
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i].equals(account)) {
                 return i;

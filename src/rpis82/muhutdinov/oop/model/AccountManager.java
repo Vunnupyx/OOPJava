@@ -1,5 +1,8 @@
 package rpis82.muhutdinov.oop.model;
 
+import java.util.NoSuchElementException;
+import java.util.Objects;
+
 public class AccountManager {
     public Client[] individuals;
     private int size;
@@ -23,7 +26,8 @@ public class AccountManager {
     }
 
     //Добавить ссылку
-    public boolean add(Client individual) {
+    public boolean add(Client individual) throws NullPointerException {
+        Objects.requireNonNull(individual, "Client is null");
         for (int i = 0; i < individuals.length; i++) {
             if (individuals[i] == null) {
                 individuals[i] = individual;
@@ -37,25 +41,35 @@ public class AccountManager {
         return true;
     }
 
-    public boolean add(int index, Client individual) {
+    public boolean add(int index, Client individual) throws IndexOutOfBoundsException, NullPointerException {
+        Objects.requireNonNull(individual, "Client is null");
+        if (index > this.size || index <= 0)
+            throw new IndexOutOfBoundsException("Index is not acceptable");
         individuals[index] = individual;
         return true;
     }
 
     //Получить ссылку
-    public Client get(int index) {
+    public Client get(int index) throws IndexOutOfBoundsException {
+        if (index > this.size || index <= 0)
+            throw new IndexOutOfBoundsException("Index is not acceptable");
         return individuals[index];
     }
 
     //Изменить ссылку по номеру массива
-    public Client set(int index, Client individual) {
+    public Client set(int index, Client individual) throws IndexOutOfBoundsException, NullPointerException {
+        Objects.requireNonNull(individual, "Client is null");
+        if (index > this.size || index <= 0)
+            throw new IndexOutOfBoundsException("Index is not acceptable");
         Client lostAccount = individuals[index];
         individuals[index] = individual;
         return lostAccount;
     }
 
     //Удалить ссылку
-    public Client remove(int index) {
+    public Client remove(int index) throws IndexOutOfBoundsException {
+        if (index > this.size || index <= 0)
+            throw new IndexOutOfBoundsException("Index is not acceptable");
         Client lostAccount = individuals[index];
         System.arraycopy(individuals, index + 1, individuals, index, individuals.length - 1 - index);
         individuals[individuals.length - 1] = null;
@@ -90,32 +104,52 @@ public class AccountManager {
         return returnClients;
     }
 
-    public Account getAccount(String accountNumber) {
+    public Account getAccount(String accountNumber) throws InvalidAccountNumberException, NullPointerException {
+        Objects.requireNonNull(accountNumber, "accountNumber is null");
+        InvalidAccountNumberException.NumberException(accountNumber);
         for (Client individual : individuals) {
             return individual.get(accountNumber);
         }
-        return null;
+        throw new NoSuchElementException("Number not found");
     }
 
-    public Account removeAccount(String accountNumber) {
-
+    public Account removeAccount(String accountNumber) throws InvalidAccountNumberException, NullPointerException {
+        Objects.requireNonNull(accountNumber, "accountNumber is null");
+        InvalidAccountNumberException.NumberException(accountNumber);
         for (Client individual : individuals) {
             return individual.remove(accountNumber);
         }
-        return null;
+        throw new NoSuchElementException("Number not found");
     }
 
-    public Account setAccount(String accountNumber, Account account) {
-        for (int i = 0; i < individuals.length; i++) {
-            Account[] arrayAccounts = individuals[i].getAccounts();
-            for (int j = 0; j < arrayAccounts.length; j++) {
-                if (compareAccountNumber(arrayAccounts[j], accountNumber)) {
-                    individuals[i].set(j, account);
-                    return arrayAccounts[j];
+    public Account setAccount(String accountNumber, Account account) throws InvalidAccountNumberException, NullPointerException, DublicateAccountNumberException {
+        Objects.requireNonNull(accountNumber, "accountNumber is null");
+        Objects.requireNonNull(account, "account is null");
+        InvalidAccountNumberException.NumberException(accountNumber);
+        if (isAccountNumberAlready(account))
+            throw new DublicateAccountNumberException("Account Number already");
+            for (int i = 0; i < individuals.length; i++) {
+                Account[] arrayAccounts = individuals[i].getAccounts();
+                for (int j = 0; j < arrayAccounts.length; j++) {
+                    if (compareAccountNumber(arrayAccounts[j], accountNumber)) {
+                        individuals[i].set(j, account);
+                        return arrayAccounts[j];
+                    }
+                }
+            }
+        throw new NoSuchElementException("Number not found");
+    }
+
+    private boolean isAccountNumberAlready(Account account) {
+        for (Client individual : individuals) {
+            Account[] arrayAccounts = individual.getAccounts();
+            for (Account arrayAccount : arrayAccounts) {
+                if (arrayAccount.getNumber().equals(account.getNumber())) {
+                    return true;
                 }
             }
         }
-        return null;
+        return false;
     }
 
     private boolean compareAccountNumber(Account account, String accountNumber) {
@@ -123,12 +157,12 @@ public class AccountManager {
     }
 
     //лаб 3
-    public Client[] getDebtors(){
+    public Client[] getDebtors() {
         Client[] clients = getClients();
         Client[] clientsWithNull = new Client[size];
         int count = 0;
-        for (Client client : clients){
-            if (client.getCreditAccounts().length != 0){
+        for (Client client : clients) {
+            if (client.getCreditAccounts().length != 0) {
                 clientsWithNull[count] = client;
                 count += 1;
             }
@@ -138,12 +172,12 @@ public class AccountManager {
         return clientsWithoutNull;
     }
 
-    public Client[] getWickedDebtors(){
+    public Client[] getWickedDebtors() {
         Client[] clients = getDebtors();
         Client[] clientsWithNull = new Client[clients.length];
         int count = 0;
-        for (Client client : clients){
-            if (client.getStatus() == ClientStatus.BAD){
+        for (Client client : clients) {
+            if (client.getStatus() == ClientStatus.BAD) {
                 clientsWithNull[count] = client;
                 count += 1;
             }
@@ -162,7 +196,8 @@ public class AccountManager {
         return stringBuilder.toString();
     }
 
-    public boolean remove(Client client){
+    public boolean remove(Client client) throws NullPointerException {
+        Objects.requireNonNull(client, "client is null");
         int index = indexOf(client);
         if (index != -1) {
             remove(index);
@@ -171,7 +206,8 @@ public class AccountManager {
         return false;
     }
 
-    public int indexOf(Client client){
+    public int indexOf(Client client) throws NullPointerException {
+        Objects.requireNonNull(client, "client is null");
         Client[] clients = getClients();
         for (int i = 0; i < clients.length; i++) {
             if (clients[i].equals(client)) {

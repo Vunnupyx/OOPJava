@@ -1,5 +1,6 @@
 package rpis82.muhutdinov.oop.model;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class CreditAccount extends AbstractAccount implements Credit, Cloneable {
@@ -7,12 +8,14 @@ public class CreditAccount extends AbstractAccount implements Credit, Cloneable 
 
     private double APR;
 
-    public CreditAccount() {
+    public CreditAccount(String number, LocalDate expirationDate) {
+        super(number, expirationDate);
         APR = 30;
     }
 
-    public CreditAccount(String number, double balance, double APR) {
-        super(number, balance);
+    public CreditAccount(String number, double balance, double APR, LocalDate creationDate, LocalDate expirationDate) {
+        super(number, balance, creationDate, expirationDate);
+        isBalanceAcceptable(balance);
         this.APR = APR;
     }
 
@@ -43,7 +46,9 @@ public class CreditAccount extends AbstractAccount implements Credit, Cloneable 
         if (!super.equals(o)) return false;
         CreditAccount that = (CreditAccount) o;
         return Double.compare(that.APR, APR) == 0 && Double.compare(that.getBalance(), getBalance()) == 0 &&
-                Objects.equals(getNumber(), that.getNumber());
+                Objects.equals(getNumber(), that.getNumber()) &&
+                Objects.equals(getCreationDate(), that.getCreationDate()) &&
+                Objects.equals(getExpirationDate(), that.getExpirationDate());
     }
 
     @Override
@@ -52,4 +57,22 @@ public class CreditAccount extends AbstractAccount implements Credit, Cloneable 
         return (CreditAccount) super.clone();
     }
 
+    private void isBalanceAcceptable(double balance) {
+        if (balance > 0)
+            throw new IllegalArgumentException("balance is not acceptable for CreditAccount");
+    }
+
+    @Override
+    public double nextPaymentValue() {
+        double countOfMonths = monthesQuantityBeforeExpiration();
+        double countOfYear =  countOfMonths / 12;
+        return getBalance() * (1 + APR / 100 * countOfYear) / countOfMonths;
+    }
+
+    @Override
+    public LocalDate nextPaymentDate() {
+        if (LocalDate.now().getDayOfMonth() < 26)
+            return LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 25);
+        else return LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue() + 1, 25);
+    }
 }
