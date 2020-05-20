@@ -18,36 +18,38 @@ class Test {
     static void lab4tests(){
         AbstractAccount ada = new AbstractAccount("5678", 2000);
 
-        System.out.println(ada.toString());
+        //System.out.println(ada.toString());
         System.out.println(ada.hashCode());
-        System.out.println(ada.toString());
-        System.out.println(ada.hashCode());
-        try {
-            Account cloneAccount = ada.clone();
-            System.out.println(cloneAccount.toString());
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        //System.out.println(ada.toString());
+
+//        try {
+//            Account cloneAccount = ada.clone();
+//            System.out.println(cloneAccount.toString());
+//        } catch (CloneNotSupportedException e) {
+//            e.printStackTrace();
+//        }
 
         System.out.println("<-------DebitAccount------>");
         DebitAccount adss = new DebitAccount("5555", 2000);
 
-        try {
-            DebitAccount cloneAccount2 = adss.clone();
-            System.out.println(cloneAccount2.toString());
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        System.out.println(adss.hashCode());
+//        try {
+//            DebitAccount cloneAccount2 = adss.clone();
+//            System.out.println(cloneAccount2.toString());
+//        } catch (CloneNotSupportedException e) {
+//            e.printStackTrace();
+//        }
         System.out.println("<-------CreditAccount------>");
         Account creditAccount = new CreditAccount(ada.getNumber(), ada.getBalance(), 25);
         CreditAccount creditAccount2 = new CreditAccount(adss.getNumber(), adss.getBalance(), 35);
-        System.out.println("EQUALS " + creditAccount.equals(creditAccount2));
-        try {
-            CreditAccount cloneCredit = creditAccount2.clone();
-            System.out.println(cloneCredit.toString());
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        System.out.println(creditAccount2.hashCode());
+//        System.out.println("EQUALS " + creditAccount.equals(creditAccount2));
+//        try {
+//            CreditAccount cloneCredit = creditAccount2.clone();
+//            System.out.println(cloneCredit.toString());
+//        } catch (CloneNotSupportedException e) {
+//            e.printStackTrace();
+//        }
 
         System.out.println("<-------Individual------>");
         Account[] accounts = {ada, adss};

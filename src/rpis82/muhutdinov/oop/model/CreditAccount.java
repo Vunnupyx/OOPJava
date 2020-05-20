@@ -33,7 +33,7 @@ public class CreditAccount extends AbstractAccount implements Credit, Cloneable 
 
     @Override
     public int hashCode() {
-        return 71 * super.hashCode() * Double.hashCode(APR);
+        return 71 * super.hashCode() & Double.hashCode(APR);
     }
 
     @Override

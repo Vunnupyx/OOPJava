@@ -51,7 +51,7 @@ public class AbstractAccount implements Account, Cloneable {
 
     @Override
     public int hashCode() {
-        return number.hashCode() * Double.hashCode(balance);
+        return  number.hashCode() & Double.hashCode(balance);
     }
 
 
