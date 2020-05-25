@@ -1,9 +1,10 @@
 package rpis82.muhutdinov.oop.model;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-public class AccountManager {
+public class AccountManager implements Iterable<Client>{
     public Client[] individuals;
     private int size;
 
@@ -128,15 +129,15 @@ public class AccountManager {
         InvalidAccountNumberException.NumberException(accountNumber);
         if (isAccountNumberAlready(account))
             throw new DublicateAccountNumberException("Account Number already");
-            for (int i = 0; i < individuals.length; i++) {
-                Account[] arrayAccounts = individuals[i].getAccounts();
-                for (int j = 0; j < arrayAccounts.length; j++) {
-                    if (compareAccountNumber(arrayAccounts[j], accountNumber)) {
-                        individuals[i].set(j, account);
-                        return arrayAccounts[j];
-                    }
+        for (Client individual : individuals) {
+            Account[] arrayAccounts = individual.getAccounts();
+            for (int j = 0; j < arrayAccounts.length; j++) {
+                if (compareAccountNumber(arrayAccounts[j], accountNumber)) {
+                    individual.set(j, account);
+                    return arrayAccounts[j];
                 }
             }
+        }
         throw new NoSuchElementException("Number not found");
     }
 
@@ -215,5 +216,27 @@ public class AccountManager {
             }
         }
         return -1;
+    }
+
+    private class AccountIterator implements Iterator<Client> {
+        int count = 0;
+
+        @Override
+        public boolean hasNext() {
+            return size != count;
+        }
+
+        @Override
+        public Client next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("Элементов больше нет");
+            } else {
+                return individuals[count++];
+            }
+        }
+    }
+    public Iterator<Client> iterator()
+    {
+        return new AccountManager.AccountIterator();
     }
 }

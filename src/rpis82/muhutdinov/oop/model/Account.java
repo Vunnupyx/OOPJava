@@ -2,7 +2,7 @@ package rpis82.muhutdinov.oop.model;
 
 import java.time.LocalDate;
 
-public interface Account {
+public interface Account extends Comparable<Account>{
     String getNumber();
 
     void setNumber(String number);

@@ -1,6 +1,6 @@
 package rpis82.muhutdinov.oop.model;
 
-public interface Client {
+public interface Client extends Iterable<Account>, Comparable<Client>{
     boolean add(Account account) throws DublicateAccountNumberException;
 
     boolean add(int index, Account account) throws DublicateAccountNumberException;
@@ -54,6 +54,13 @@ public interface Client {
 
     int indexOf(Account account);
 
-    double debtTotal();
+    default double debtTotal(){
+        double sumDebt = 0;
+        Account[] accounts = getCreditAccounts();
+        for (Account account : accounts)
+            sumDebt += account.getBalance();
+
+        return sumDebt;
+    }
 
 }

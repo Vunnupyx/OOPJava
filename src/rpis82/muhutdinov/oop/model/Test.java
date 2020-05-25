@@ -1,6 +1,7 @@
 package rpis82.muhutdinov.oop.model;
 
 import java.time.LocalDate;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,7 +9,7 @@ class Test {
 
     public static void main(String[] args) {
         //System.out.println("Я сделяль!");
-        lab5tests();
+        lab6tests();
     }
 
     /* static void lab4tests(){
@@ -75,7 +76,7 @@ class Test {
          System.out.println("<-------Finish------>");
 
      }*/
-    static void lab5tests() {
+    /*static void lab5tests() {
         LocalDate localDate = LocalDate.of(2020, 3, 15);
         LocalDate localDate2 = LocalDate.of(2020, 6, 15);
 
@@ -126,5 +127,46 @@ String number ="40321810300020000001";
         System.out.println(individual.toString());
         //System.out.println(individual.hasAccount("4032181030002000001"));
         //Entity ae = new Entity("ada", accounts);
+    }*/
+    static void lab6tests() {
+
+        LocalDate localDate = LocalDate.of(2020, 3, 15);
+        LocalDate localDate2 = LocalDate.of(2020, 6, 15);
+
+        LocalDate localDate1 = LocalDate.of(2021, 12, 23);
+        AbstractAccount abstractAccount = new AbstractAccount("40321810300020000041", -666, localDate, localDate2);
+        AbstractAccount abstractAccount1 = new AbstractAccount("40321810300020000051", localDate1);
+
+        System.out.println("<-------CreditAccount------>");
+        CreditAccount creditAccount = new CreditAccount(abstractAccount.getNumber(), abstractAccount.getBalance(), 25, localDate, localDate2);
+        CreditAccount creditAccount2 = new CreditAccount(abstractAccount1.getNumber(),-2500, 25, localDate, localDate1);
+
+        System.out.println("<-------DebitAccount------>");
+        DebitAccount adss = new DebitAccount("40321810300020000001", 2000, localDate, localDate2);
+
+        System.out.println("<-----------------Individual--------------------->");
+        Account[] accounts = {adss, abstractAccount, creditAccount};
+        Individual individual = new Individual("MyName", accounts);
+        Account[] accountss = {adss, abstractAccount, creditAccount2};
+        try {
+            Client entity = new Entity("SecondName", accountss);
+            System.out.println(entity.debtTotal());
+        } catch (DublicateAccountNumberException e) {
+            e.printStackTrace();
+        }
+        System.out.println(individual.debtTotal());
+        System.out.println("<-----------------Iterator--------------------->");
+        Iterator<Account> accountIterator = individual.iterator();
+        System.out.println(accountIterator.next());
+        System.out.println(accountIterator.next());
+
+        Account[] accountsNotSort = individual.getAccounts();
+        for (Account account : accountsNotSort)
+            System.out.println(account.getBalance());
+        Account[] sortAccount = individual.sortedAccountByBalance();
+        for (Account account : sortAccount)
+            System.out.println(account.getBalance());
+
+
     }
 }

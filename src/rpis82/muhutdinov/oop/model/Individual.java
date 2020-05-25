@@ -1,14 +1,15 @@
 package rpis82.muhutdinov.oop.model;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class Individual implements Client, Cloneable {
 
-    public Account[] accounts;
-    public int size;
-    public String name;
+    private Account[] accounts;
+    private int size;
+    private String name;
     private final int DEFAULT_ELEMENTS = 16;
     private int creditScore;
 
@@ -159,24 +160,15 @@ public class Individual implements Client, Cloneable {
 
     public Account[] sortedAccountByBalance() {
         Account[] returnAccounts = getAccounts();
-        Account copy;
-        for (int i = 0; i < returnAccounts.length; i++) {
-            for (int j = 0; j < returnAccounts.length - 1; j++) {
-                if (returnAccounts[j].getBalance() > returnAccounts[j + 1].getBalance()) {
-                    copy = returnAccounts[j + 1];
-                    returnAccounts[j + 1] = returnAccounts[j];
-                    returnAccounts[j] = copy;
-                }
-            }
-        }
+        Arrays.sort(returnAccounts);
         return returnAccounts;
     }
 
     public double totalBalance() {
         double sumBalance = 0;
-        for (int i = 0; i < accounts.length; i++) {
-            if (accounts[i] != null) {
-                sumBalance += accounts[i].getBalance();
+        for (Account account : accounts) {
+            if (account != null) {
+                sumBalance += account.getBalance();
             }
         }
         return sumBalance;
@@ -244,7 +236,6 @@ public class Individual implements Client, Cloneable {
 
     @Override
     public Individual clone() throws CloneNotSupportedException {
-        //return new CreditAccount(this.getNumber(), this.getBalance(), this.APR);
         return (Individual) super.clone();
     }
 
@@ -270,13 +261,30 @@ public class Individual implements Client, Cloneable {
         return -1;
     }
 
-    @Override
-    public double debtTotal() {
-        double sumDebt = 0;
-        Account[] accounts = getCreditAccounts();
-        for (Account account : accounts)
-            sumDebt += account.getBalance();
+    private class AccountIterator implements Iterator<Account> {
+        int count = 0;
 
-        return sumDebt;
+        @Override
+        public boolean hasNext() {
+            return size != count;
+        }
+
+        @Override
+        public Account next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("Элементов больше нет");
+            } else {
+                return accounts[count++];
+            }
+        }
+    }
+    public Iterator<Account> iterator()
+    {
+        return new Individual.AccountIterator();
+    }
+
+    @Override
+    public int compareTo(Client o) {
+        return (int) Math.round(totalBalance() - o.totalBalance());
     }
 }

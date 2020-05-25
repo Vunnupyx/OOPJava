@@ -1,10 +1,8 @@
 package rpis82.muhutdinov.oop.model;
 
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
-public class Entity implements Client {
+public class Entity implements Client, Cloneable {
     private String name;
     private int size;
     private Node head;
@@ -59,7 +57,7 @@ public class Entity implements Client {
     @Override
     public boolean add(Account account) throws NullPointerException, DublicateAccountNumberException {
         Objects.requireNonNull(account, "account is null");
-        if (hasAccount(account.getNumber()))
+        if (size > 0 && hasAccount(account.getNumber()))
             throw new DublicateAccountNumberException("Account number exists");
         Node newNode = new Node(null, account);
         Node last = tail;
@@ -178,16 +176,7 @@ public class Entity implements Client {
     @Override
     public Account[] sortedAccountByBalance() {
         Account[] returnAccounts = getAccounts();
-        Account copy;
-        for (int i = 0; i < returnAccounts.length; i++) {
-            for (int j = 0; j < returnAccounts.length - 1; j++) {
-                if (returnAccounts[j].getBalance() > returnAccounts[j + 1].getBalance()) {
-                    copy = returnAccounts[j + 1];
-                    returnAccounts[j + 1] = returnAccounts[j];
-                    returnAccounts[j] = copy;
-                }
-            }
-        }
+        Arrays.sort(returnAccounts);
         return returnAccounts;
     }
 
@@ -264,7 +253,6 @@ public class Entity implements Client {
 
     @Override
     public Entity clone() throws CloneNotSupportedException {
-        //return new CreditAccount(this.getNumber(), this.getBalance(), this.APR);
         return (Entity) super.clone();
     }
 
@@ -291,13 +279,33 @@ public class Entity implements Client {
         return -1;
     }
 
-    @Override
-    public double debtTotal() {
-        double sumDebt = 0;
-        Account[] accounts = getCreditAccounts();
-        for (Account account : accounts)
-            sumDebt += account.getBalance();
+    private class AccountIterator implements Iterator<Account> {
 
-        return sumDebt;
+        private Node nextItem = head.next;
+
+        @Override
+        public boolean hasNext() {
+            return nextItem != null;
+        }
+
+        @Override
+        public Account next() {
+            if (hasNext()) {
+                throw new NoSuchElementException("Элементов больше нет");
+            } else {
+                Account value = nextItem.value;
+                nextItem = nextItem.next;
+                return value;
+            }
+        }
+    }
+    public Iterator<Account> iterator()
+    {
+        return new AccountIterator();
+    }
+
+    @Override
+    public int compareTo(Client o) {
+        return (int) Math.round(totalBalance() - o.totalBalance());
     }
 }

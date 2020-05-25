@@ -9,7 +9,6 @@ public class AbstractAccount implements Account, Cloneable {
 
     private String number;
     private double balance;
-    //private final String EMPTY_NUMBER = "";
     private final int EMPTY_BALANCE = 0;
     private LocalDate creationDate;
     private LocalDate expirationDate;
@@ -77,7 +76,6 @@ public class AbstractAccount implements Account, Cloneable {
 
     @Override
     protected AbstractAccount clone() throws CloneNotSupportedException {
-        //return new AbstractAccount(this.number, this.balance);
         return (AbstractAccount) super.clone();
     }
 
@@ -108,5 +106,10 @@ public class AbstractAccount implements Account, Cloneable {
         if (Period.between(creationDate, expirationDate).getDays() < 26)
             roundingOfMonths ++;
         return roundingOfMonths;
+    }
+
+    @Override
+    public int compareTo(Account o) {
+        return (int) Math.round(this.balance - o.getBalance());
     }
 }
