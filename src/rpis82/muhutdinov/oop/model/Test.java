@@ -1,7 +1,9 @@
 package rpis82.muhutdinov.oop.model;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,7 +11,7 @@ class Test {
 
     public static void main(String[] args) {
         //System.out.println("Я сделяль!");
-        lab6tests();
+        lab7tests();
     }
 
     /* static void lab4tests(){
@@ -128,7 +130,7 @@ String number ="40321810300020000001";
         //System.out.println(individual.hasAccount("4032181030002000001"));
         //Entity ae = new Entity("ada", accounts);
     }*/
-    static void lab6tests() {
+    /*static void lab6tests() {
 
         LocalDate localDate = LocalDate.of(2020, 3, 15);
         LocalDate localDate2 = LocalDate.of(2020, 6, 15);
@@ -168,5 +170,53 @@ String number ="40321810300020000001";
             System.out.println(account.getBalance());
 
 
+    }*/
+    static void lab7tests() {
+        LocalDate localDate = LocalDate.of(2020, 3, 15);
+        LocalDate localDate1 = LocalDate.of(2020, 6, 15);
+        LocalDate localDate2 = LocalDate.of(2021, 12, 23);
+
+        DebitAccount debitAccount = new DebitAccount("40321810300020000001", 2000, localDate, localDate1);
+        DebitAccount debitAccount1 = new DebitAccount("40321810300020000002", 2400, localDate, localDate2);
+        CreditAccount creditAccount = new CreditAccount(debitAccount.getNumber(), -40000, 25, localDate, localDate1);
+
+        Account[] accounts = {debitAccount, creditAccount};
+        System.out.println("<-----------------Entity--------------------->");
+        Entity entity = new Entity("MyName", accounts);
+        System.out.println("isEmpty: " + entity.isEmpty());
+        System.out.println("contains: " + entity.contains(creditAccount));
+        Account[] accounts1 = entity.toArray();
+        for (Account account : accounts1)
+            System.out.println(account.getBalance());
+        entity.add(debitAccount1);
+        System.out.println(entity.toString());
+        entity.remove(debitAccount);
+        System.out.println(entity.toString());
+        System.out.println(entity.containsAll(Arrays.asList(accounts)));
+        /*entity.clear();
+        System.out.println(entity.debtTotal());*/
+        System.out.println("<-----------------Individual--------------------->");
+        Individual individual = new Individual("Name", accounts);
+        System.out.println("isEmpty: " + individual.isEmpty());
+        System.out.println("contains: " + individual.contains(creditAccount));
+        Account[] accounts12 = individual.toArray();
+        for (Account account : accounts12)
+            System.out.println(account.getBalance());
+        individual.add(debitAccount1);
+        System.out.println(individual.toString());
+       // individual.remove(creditAccount);
+        System.out.println(individual.toString());
+        System.out.println(individual.containsAll(Arrays.asList(accounts)));
+        System.out.println(individual.contains(debitAccount));
+        List<Account> list = individual.sortedAccountByBalance();
+        for (Account account : list)
+            System.out.println(account.getBalance());
+        System.out.println("<-----------------AccountManager--------------------->");
+        Client[] clients = {individual, entity};
+        AccountManager accountManager = new AccountManager(clients);
+        List<Client> list1 = accountManager.sortedByBalanceClients();
+        Client[] clients1 = accountManager.getClients();
+        for (Client client : list1)
+            System.out.println(client.totalBalance());
     }
 }

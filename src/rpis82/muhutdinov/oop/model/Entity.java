@@ -15,16 +15,13 @@ public class Entity implements Client, Cloneable {
         this.tail = null;
     }
 
-    public Entity(String name, Account[] accounts) throws DublicateAccountNumberException {
+    public Entity(String name, Account[] accounts) {
         this.name = name;
-        for (Account account : accounts) {
-            add(account);
-        }
+        this.addAll(Arrays.asList(accounts));
     }
 
-    //возвращающий ссылку на узел по его номеру в списке
     private Node linkByIndex(int index) throws IndexOutOfBoundsException {
-        if (index > this.size || index <= 0)
+        if (index >= this.size && index < 0)
             throw new IndexOutOfBoundsException("Index is not acceptable");
         Node arrayNode = head.next;
         for (int i = 0; i < index; i++) {
@@ -55,26 +52,9 @@ public class Entity implements Client, Cloneable {
     }
 
     @Override
-    public boolean add(Account account) throws NullPointerException, DublicateAccountNumberException {
-        Objects.requireNonNull(account, "account is null");
-        if (size > 0 && hasAccount(account.getNumber()))
-            throw new DublicateAccountNumberException("Account number exists");
-        Node newNode = new Node(null, account);
-        Node last = tail;
-        tail = newNode;
-        if (last == null) {
-            head = new Node(newNode, null);
-        } else {
-            last.next = newNode;
-        }
-        size++;
-        return true;
-    }
-
-    @Override
     public boolean add(int index, Account account) throws IndexOutOfBoundsException, NullPointerException, DublicateAccountNumberException {
         Objects.requireNonNull(account, "account is null");
-        if (index > this.size || index <= 0)
+        if (index >= this.size && index < 0)
             throw new IndexOutOfBoundsException("Index is not acceptable");
         if (hasAccount(account.getNumber()))
             throw new DublicateAccountNumberException("Account number exists");
@@ -90,7 +70,7 @@ public class Entity implements Client, Cloneable {
 
     @Override
     public Account get(int index) throws IndexOutOfBoundsException {
-        if (index > this.size || index <= 0)
+        if (index >= this.size && index < 0)
             throw new IndexOutOfBoundsException("Index is not acceptable");
         Node node = linkByIndex(index);
         return node.value;
@@ -121,7 +101,7 @@ public class Entity implements Client, Cloneable {
     @Override
     public Account set(int index, Account account) throws IndexOutOfBoundsException, NullPointerException, DublicateAccountNumberException {
         Objects.requireNonNull(account, "account is null");
-        if (index > this.size || index <= 0)
+        if (index >= this.size && index < 0)
             throw new IndexOutOfBoundsException("Index is not acceptable");
         if (hasAccount(account.getNumber()))
             throw new DublicateAccountNumberException("Account number exists");
@@ -133,12 +113,13 @@ public class Entity implements Client, Cloneable {
 
     @Override
     public Account remove(int index) throws IndexOutOfBoundsException {
-        if (index > this.size || index <= 0)
+        if (index >= this.size && index < 0)
             throw new IndexOutOfBoundsException("Index is not acceptable");
         Node lostLink = linkByIndex(index);
+        if (index == 0)
+            head.next = linkByIndex(index + 1);
         Node previousLink = linkByIndex(index - 1);
-        Node nextLink = linkByIndex(index + 1);
-        previousLink.next = new Node(nextLink.next, nextLink.value);
+        previousLink.next = linkByIndex(index + 1);
         size--;
         return lostLink.value;
     }
@@ -163,21 +144,12 @@ public class Entity implements Client, Cloneable {
     }
 
     @Override
-    public Account[] getAccounts() {
-        Account[] accounts = new Account[size];
-        Node node = head.next;
-        for (int i = 0; i < size; i++) {
-            accounts[i] = node.value;
-            node = node.next;
-        }
+    public List<Account> sortedAccountByBalance() {
+        List<Account> accounts = new ArrayList<>();
+        Account[] allAccounts = toArray();
+        Arrays.sort(allAccounts);
+        Collections.addAll(accounts, allAccounts);
         return accounts;
-    }
-
-    @Override
-    public Account[] sortedAccountByBalance() {
-        Account[] returnAccounts = getAccounts();
-        Arrays.sort(returnAccounts);
-        return returnAccounts;
     }
 
     @Override
@@ -202,19 +174,15 @@ public class Entity implements Client, Cloneable {
     }
 
     @Override
-    public Account[] getCreditAccounts() {
-        Account[] accounts = getAccounts();
-        Account[] accountsWithNull = new Account[size];
-        int count = 0;
-        for (Account account : accounts) {
+    public Collection<Account> getCreditAccounts() {
+        Collection<Account> accounts = new LinkedList<>();
+        Account[] allAccounts = toArray();
+        for (Account account : allAccounts) {
             if (account.getClass().equals(CreditAccount.class)) {
-                accountsWithNull[count] = account;
-                count += 1;
+                accounts.add(account);
             }
         }
-        Account[] accountsWithoutNull = new Account[count];
-        System.arraycopy(accountsWithNull, 0, accountsWithoutNull, 0, count);
-        return accountsWithoutNull;
+        return accounts;
     }
 
 
@@ -223,7 +191,7 @@ public class Entity implements Client, Cloneable {
         StringBuilder stringBuilder = new StringBuilder("Client");
         stringBuilder.append("\nname: ").append(this.name);
         stringBuilder.append("\ncreditScore: ").append(this.creditScore);
-        Account[] accounts = getAccounts();
+        Account[] accounts = toArray();
         for (Account account : accounts)
             stringBuilder.append("\n").append(account.toString());
         stringBuilder.append("\ntotal: ").append(totalBalance());
@@ -233,7 +201,7 @@ public class Entity implements Client, Cloneable {
     @Override
     public int hashCode() {
         int xorAccountsHash = 0;
-        Account[] accounts = getAccounts();
+        Account[] accounts = toArray();
         for (int i = 0; i < size; i++) {
             xorAccountsHash ^= accounts[i].hashCode();
         }
@@ -247,7 +215,7 @@ public class Entity implements Client, Cloneable {
         Entity that = (Entity) o;
         return size == that.size &&
                 creditScore == that.creditScore &&
-                Arrays.equals(getAccounts(), that.getAccounts()) &&
+                Arrays.equals(toArray(), that.toArray()) &&
                 Objects.equals(name, that.name);
     }
 
@@ -257,20 +225,9 @@ public class Entity implements Client, Cloneable {
     }
 
     @Override
-    public boolean remove(Account account) throws NullPointerException {
+    public int indexOf(Object account) throws NullPointerException {
         Objects.requireNonNull(account, "account is null");
-        int index = indexOf(account);
-        if (index != -1) {
-            remove(index);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int indexOf(Account account) throws NullPointerException {
-        Objects.requireNonNull(account, "account is null");
-        Account[] accounts = getAccounts();
+        Account[] accounts = toArray();
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i].equals(account)) {
                 return i;
@@ -289,8 +246,8 @@ public class Entity implements Client, Cloneable {
         }
 
         @Override
-        public Account next() {
-            if (hasNext()) {
+        public Account next() throws NoSuchElementException {
+            if (!hasNext()) {
                 throw new NoSuchElementException("Элементов больше нет");
             } else {
                 Account value = nextItem.value;
@@ -299,8 +256,9 @@ public class Entity implements Client, Cloneable {
             }
         }
     }
-    public Iterator<Account> iterator()
-    {
+
+    @Override
+    public Iterator<Account> iterator() {
         return new AccountIterator();
     }
 
@@ -308,4 +266,112 @@ public class Entity implements Client, Cloneable {
     public int compareTo(Client o) {
         return (int) Math.round(totalBalance() - o.totalBalance());
     }
+
+    //laba 7
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    @Override
+    public boolean contains(Object object) {
+        Objects.requireNonNull(object, "входной параметр null");
+        for (Account account : this) {
+            if (object.equals(account)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Account[] toArray() {
+        Account[] accounts = new Account[size];
+        Node node = head.next;
+        for (int i = 0; i < size; i++) {
+            accounts[i] = node.value;
+            node = node.next;
+        }
+        return accounts;
+    }
+
+    @Override
+    public <T> T[] toArray(T[] account) {
+        return Arrays.copyOf(account, account.length);
+    }
+
+    @Override
+    public boolean add(Account account) {
+        Objects.requireNonNull(account, "входной параметр null");
+        Node newNode = new Node(null, account);
+        Node last = tail;
+        tail = newNode;
+        if (last == null) {
+            head = new Node(newNode, null);
+        } else {
+            last.next = newNode;
+        }
+        size++;
+        return true;
+    }
+
+    @Override
+    public boolean remove(Object object) {
+        Objects.requireNonNull(object, "входной параметр null");
+        int index = indexOf(object);
+        if (index != -1) {
+            remove(index);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> collection) {
+        for (Object object : collection) {
+            if (!contains(object)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends Account> collection) {
+
+        for (Account account : collection) {
+            add(account);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> collection) {
+
+        for (Object object : collection) {
+            remove(object);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> collection) {
+
+        for (Account account : this) {
+            if (account != null) {
+                if (!collection.contains(account)) {
+                    remove(account);
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void clear() {
+        this.head = null;
+        this.tail = null;
+        this.creditScore = 0;
+    }
+
 }

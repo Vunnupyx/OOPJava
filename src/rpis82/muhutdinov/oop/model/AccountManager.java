@@ -1,14 +1,11 @@
 package rpis82.muhutdinov.oop.model;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 public class AccountManager implements Iterable<Client>{
     public Client[] individuals;
     private int size;
 
-    //Конструкторы
     public AccountManager(int size) {
         individuals = new Individual[size];
         this.size = size;
@@ -26,7 +23,6 @@ public class AccountManager implements Iterable<Client>{
         individuals = newAccount;
     }
 
-    //Добавить ссылку
     public boolean add(Client individual) throws NullPointerException {
         Objects.requireNonNull(individual, "Client is null");
         for (int i = 0; i < individuals.length; i++) {
@@ -50,14 +46,12 @@ public class AccountManager implements Iterable<Client>{
         return true;
     }
 
-    //Получить ссылку
     public Client get(int index) throws IndexOutOfBoundsException {
         if (index > this.size || index <= 0)
             throw new IndexOutOfBoundsException("Index is not acceptable");
         return individuals[index];
     }
 
-    //Изменить ссылку по номеру массива
     public Client set(int index, Client individual) throws IndexOutOfBoundsException, NullPointerException {
         Objects.requireNonNull(individual, "Client is null");
         if (index > this.size || index <= 0)
@@ -67,7 +61,6 @@ public class AccountManager implements Iterable<Client>{
         return lostAccount;
     }
 
-    //Удалить ссылку
     public Client remove(int index) throws IndexOutOfBoundsException {
         if (index > this.size || index <= 0)
             throw new IndexOutOfBoundsException("Index is not acceptable");
@@ -78,31 +71,22 @@ public class AccountManager implements Iterable<Client>{
         return lostAccount;
     }
 
-    // возвращающий число физ. лиц
     public int size() {
         return size;
     }
 
-    //Возвращает массив физ. лиц
     public Client[] getClients() {
-        Client[] returnClients = new Individual[size];
+        Client[] returnClients = new Client[size];
         System.arraycopy(individuals, 0, returnClients, 0, size);
         return returnClients;
     }
 
-    public Client[] sortedByBalanceClients() {
-        Client[] returnClients = getClients();
-        Client copy;
-        for (int i = 0; i < returnClients.length; i++) {
-            for (int j = 0; j < returnClients.length - 1; j++) {
-                if (returnClients[j].totalBalance() > returnClients[j + 1].totalBalance()) {
-                    copy = returnClients[j + 1];
-                    returnClients[j + 1] = returnClients[j];
-                    returnClients[j] = copy;
-                }
-            }
-        }
-        return returnClients;
+    public List<Client> sortedByBalanceClients() {
+        List<Client> clients = new ArrayList<>();
+        Client[] allClients = getClients();
+        Arrays.sort(allClients);
+        Collections.addAll(clients, allClients);
+        return clients;
     }
 
     public Account getAccount(String accountNumber) throws InvalidAccountNumberException, NullPointerException {
@@ -130,7 +114,7 @@ public class AccountManager implements Iterable<Client>{
         if (isAccountNumberAlready(account))
             throw new DublicateAccountNumberException("Account Number already");
         for (Client individual : individuals) {
-            Account[] arrayAccounts = individual.getAccounts();
+            Account[] arrayAccounts = individual.toArray();
             for (int j = 0; j < arrayAccounts.length; j++) {
                 if (compareAccountNumber(arrayAccounts[j], accountNumber)) {
                     individual.set(j, account);
@@ -143,7 +127,7 @@ public class AccountManager implements Iterable<Client>{
 
     private boolean isAccountNumberAlready(Account account) {
         for (Client individual : individuals) {
-            Account[] arrayAccounts = individual.getAccounts();
+            Account[] arrayAccounts = individual.toArray();
             for (Account arrayAccount : arrayAccounts) {
                 if (arrayAccount.getNumber().equals(account.getNumber())) {
                     return true;
@@ -158,34 +142,26 @@ public class AccountManager implements Iterable<Client>{
     }
 
     //лаб 3
-    public Client[] getDebtors() {
-        Client[] clients = getClients();
-        Client[] clientsWithNull = new Client[size];
-        int count = 0;
-        for (Client client : clients) {
-            if (client.getCreditAccounts().length != 0) {
-                clientsWithNull[count] = client;
-                count += 1;
+    public Set<Client> getDebtors() {
+        Set<Client> clients = new HashSet<>();
+        Client[] allClients = getClients();
+        for (Client client : allClients) {
+            if (client.getCreditAccounts().size() != 0) {
+                clients.add(client);
             }
         }
-        Client[] clientsWithoutNull = new Client[count];
-        System.arraycopy(clientsWithNull, 0, clientsWithoutNull, 0, count);
-        return clientsWithoutNull;
+        return clients;
     }
 
-    public Client[] getWickedDebtors() {
-        Client[] clients = getDebtors();
-        Client[] clientsWithNull = new Client[clients.length];
-        int count = 0;
-        for (Client client : clients) {
+    public Set<Client> getWickedDebtors() {
+        Set<Client> clients = new HashSet<>();
+        Set<Client> allClients = getDebtors();
+        for (Client client : allClients) {
             if (client.getStatus() == ClientStatus.BAD) {
-                clientsWithNull[count] = client;
-                count += 1;
+                clients.add(client);
             }
         }
-        Client[] clientsWithoutNull = new Client[count];
-        System.arraycopy(clientsWithNull, 0, clientsWithoutNull, 0, count);
-        return clientsWithoutNull;
+        return clients;
     }
 
     @Override

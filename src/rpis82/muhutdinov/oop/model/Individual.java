@@ -1,19 +1,15 @@
 package rpis82.muhutdinov.oop.model;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 public class Individual implements Client, Cloneable {
 
-    private Account[] accounts;
+    public Account[] accounts;
     private int size;
     private String name;
     private final int DEFAULT_ELEMENTS = 16;
     private int creditScore;
 
-    //Конструкторы
     public Individual() {
         accounts = new Account[DEFAULT_ELEMENTS];
         size = DEFAULT_ELEMENTS;
@@ -44,33 +40,14 @@ public class Individual implements Client, Cloneable {
 
     // Доп. метод Расширить
     private void extendAccounts() {
-        Account[] newAccount = new DebitAccount[accounts.length * 2];
+        Account[] newAccount = new Account[accounts.length * 2];
         System.arraycopy(accounts, 0, newAccount, 0, accounts.length);
         accounts = newAccount;
     }
 
-    //Добавить ссылку
-    @Override
-    public boolean add(Account account) throws NullPointerException, DublicateAccountNumberException {
-        Objects.requireNonNull(account, "Account is null");
-        if (hasAccount(account.getNumber()))
-            throw new DublicateAccountNumberException("Account number exists");
-        for (int i = 0; i < accounts.length; i++) {
-            if (accounts[i] == null) {
-                accounts[i] = account;
-                size++;
-                return true;
-            }
-        }
-        extendAccounts();
-        accounts[accounts.length / 2] = account;
-        size++;
-        return true;
-    }
-
     public boolean add(int index, Account account) throws IndexOutOfBoundsException, NullPointerException, DublicateAccountNumberException {
         Objects.requireNonNull(account, "Account is null");
-        if (index > this.size || index <= 0)
+        if (index >= this.size && index < 0)
             throw new IndexOutOfBoundsException("Index is not acceptable");
         if (hasAccount(account.getNumber()))
             throw new DublicateAccountNumberException("Account number exists");
@@ -78,9 +55,8 @@ public class Individual implements Client, Cloneable {
         return true;
     }
 
-    //Получить ссылку
     public Account get(int index) throws IndexOutOfBoundsException {
-        if (index > this.size || index <= 0)
+        if (index >= this.size && index < 0)
             throw new IndexOutOfBoundsException("Index is not acceptable");
         return accounts[index];
     }
@@ -99,8 +75,6 @@ public class Individual implements Client, Cloneable {
         throw new NoSuchElementException("Number not found");
     }
 
-
-    //Проверить есть ли ссылка с заданным номером
     public boolean hasAccount(String accountNumber) throws InvalidAccountNumberException, NullPointerException {
         Objects.requireNonNull(accountNumber, "AccountNumber is null");
         InvalidAccountNumberException.NumberException(accountNumber);
@@ -111,10 +85,9 @@ public class Individual implements Client, Cloneable {
         return false;
     }
 
-    //Изменить ссылку по номеру массива
     public Account set(int index, Account account) throws IndexOutOfBoundsException, NullPointerException, DublicateAccountNumberException {
         Objects.requireNonNull(account, "Account is null");
-        if (index > this.size || index <= 0)
+        if (index >= this.size && index < 0)
             throw new IndexOutOfBoundsException("Index is not acceptable");
         if (hasAccount(account.getNumber()))
             throw new DublicateAccountNumberException("Account number exists");
@@ -123,9 +96,8 @@ public class Individual implements Client, Cloneable {
         return lostAccount;
     }
 
-    //Удалить ссылку
     public Account remove(int index) throws IndexOutOfBoundsException {
-        if (index > this.size || index <= 0)
+        if (index >= this.size && index < 0)
             throw new IndexOutOfBoundsException("Index is not acceptable");
         Account lostAccount = accounts[index];
         System.arraycopy(accounts, index + 1, accounts, index, accounts.length - 1 - index);
@@ -145,23 +117,16 @@ public class Individual implements Client, Cloneable {
         throw new NoSuchElementException("Number not found");
     }
 
-    // возвращающий число физ. лиц
     public int size() {
         return size;
     }
 
-    //возвращающий массив счетов (значений null в массиве быть не должно, его размер должен
-    //быть равен числу элементов в исходном массиве)
-    public Account[] getAccounts() {
-        Account[] returnAccounts = new Account[size];
-        System.arraycopy(accounts, 0, returnAccounts, 0, size);
-        return returnAccounts;
-    }
-
-    public Account[] sortedAccountByBalance() {
-        Account[] returnAccounts = getAccounts();
-        Arrays.sort(returnAccounts);
-        return returnAccounts;
+    public List<Account> sortedAccountByBalance() {
+        List<Account> accounts = new ArrayList<>();
+        Account[] allAccounts = toArray();
+        Arrays.sort(allAccounts);
+        Collections.addAll(accounts, allAccounts);
+        return accounts;
     }
 
     public double totalBalance() {
@@ -174,8 +139,6 @@ public class Individual implements Client, Cloneable {
         return sumBalance;
     }
 
-
-    //лаб 3
     @Override
     public int getCreditScores() {
         return creditScore;
@@ -187,19 +150,15 @@ public class Individual implements Client, Cloneable {
     }
 
     @Override
-    public Account[] getCreditAccounts() {
-        Account[] accounts = getAccounts();
-        Account[] accountsWithNull = new Account[size];
-        int count = 0;
-        for (Account account : accounts) {
+    public Collection<Account> getCreditAccounts() {
+        Collection<Account> accounts = new LinkedList<>();
+        Account[] allAccounts = toArray();
+        for (Account account : allAccounts) {
             if (account.getClass().equals(CreditAccount.class)) {
-                accountsWithNull[count] = account;
-                count += 1;
+                accounts.add(account);
             }
         }
-        Account[] accountsWithoutNull = new Account[count];
-        System.arraycopy(accountsWithNull, 0, accountsWithoutNull, 0, count);
-        return accountsWithoutNull;
+        return accounts;
     }
 
     @Override
@@ -207,7 +166,7 @@ public class Individual implements Client, Cloneable {
         StringBuilder stringBuilder = new StringBuilder("Client");
         stringBuilder.append("\nname: ").append(this.name);
         stringBuilder.append("\ncreditScore: ").append(this.creditScore);
-        Account[] accounts = getAccounts();
+        Account[] accounts = toArray();
         for (Account account : accounts)
             stringBuilder.append("\n").append(account.toString());
         stringBuilder.append("\ntotal: ").append(totalBalance());
@@ -240,18 +199,7 @@ public class Individual implements Client, Cloneable {
     }
 
     @Override
-    public boolean remove(Account account) throws NullPointerException {
-        Objects.requireNonNull(account, "Account is null");
-        int index = indexOf(account);
-        if (index != -1) {
-            remove(index);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int indexOf(Account account) throws NullPointerException {
+    public int indexOf(Object account) throws NullPointerException {
         Objects.requireNonNull(account, "Account is null");
         for (int i = 0; i < accounts.length; i++) {
             if (accounts[i].equals(account)) {
@@ -278,13 +226,117 @@ public class Individual implements Client, Cloneable {
             }
         }
     }
-    public Iterator<Account> iterator()
-    {
+
+    public Iterator<Account> iterator() {
         return new Individual.AccountIterator();
     }
 
     @Override
     public int compareTo(Client o) {
         return (int) Math.round(totalBalance() - o.totalBalance());
+    }
+
+    //laba 7
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    @Override
+    public boolean contains(Object object) {
+        Objects.requireNonNull(object, "входной параметр null");
+        for (Account account : this) {
+            if (object.equals(account)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Account[] toArray() {
+        Account[] returnAccounts = new Account[size];
+        System.arraycopy(accounts, 0, returnAccounts, 0, size);
+        return returnAccounts;
+    }
+
+    @Override
+    public <T> T[] toArray(T[] account) {
+        return Arrays.copyOf(account, account.length);
+    }
+
+    @Override
+    public boolean add(Account account) {
+        Objects.requireNonNull(account, "входной параметр null");
+        for (int i = 0; i < accounts.length; i++) {
+            if (accounts[i] == null) {
+                accounts[i] = account;
+                size++;
+                return true;
+            }
+        }
+        extendAccounts();
+        accounts[accounts.length / 2] = account;
+        size++;
+        return true;
+    }
+
+    @Override
+    public boolean remove(Object object) {
+        Objects.requireNonNull(object, "входной параметр null");
+        int index = indexOf(object);
+        if (index != -1) {
+            remove(index);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> collection) {
+        for (Object object : collection) {
+            if (!contains(object)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends Account> collection) {
+
+        for (Account account : collection) {
+            add(account);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> collection) {
+
+        for (Object object : collection) {
+            remove(object);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> collection) {
+
+        for (Account account : this) {
+            if (account != null) {
+                if (!collection.contains(account)) {
+                    remove(account);
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void clear() {
+        this.accounts = null;
+        this.size = 0;
+        this.creditScore = 0;
     }
 }

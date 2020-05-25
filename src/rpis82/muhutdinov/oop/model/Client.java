@@ -1,8 +1,9 @@
 package rpis82.muhutdinov.oop.model;
 
-public interface Client extends Iterable<Account>, Comparable<Client>{
-    boolean add(Account account) throws DublicateAccountNumberException;
+import java.util.Collection;
+import java.util.List;
 
+public interface Client extends Iterable<Account>, Comparable<Client>, Collection<Account> {
     boolean add(int index, Account account) throws DublicateAccountNumberException;
 
     Account get(int index);
@@ -19,9 +20,9 @@ public interface Client extends Iterable<Account>, Comparable<Client>{
 
     int size();
 
-    Account[] getAccounts();
+    Account[] toArray();
 
-    Account[] sortedAccountByBalance();
+    List<Account> sortedAccountByBalance();
 
     double totalBalance();
 
@@ -29,7 +30,6 @@ public interface Client extends Iterable<Account>, Comparable<Client>{
 
     void setName(String name);
 
-    //лаб 3
     int getCreditScores();
 
     void addCreditScores(int creditScores);
@@ -48,19 +48,19 @@ public interface Client extends Iterable<Account>, Comparable<Client>{
         return ClientStatus.PLATINUM;
     }
 
-    Account[] getCreditAccounts();
+     Collection<Account> getCreditAccounts();
 
-    boolean remove(Account account);
-
-    int indexOf(Account account);
+    int indexOf(Object account);
 
     default double debtTotal(){
         double sumDebt = 0;
-        Account[] accounts = getCreditAccounts();
+        Collection<Account> accounts = getCreditAccounts();
         for (Account account : accounts)
             sumDebt += account.getBalance();
 
         return sumDebt;
     }
+
+
 
 }
